@@ -1,0 +1,299 @@
+* { box-sizing: border-box; }
+
+.mapbox {
+    position: relative;
+    border: 1px solid black;
+    width: 500px;
+    height: 500px;
+}
+
+.mapbox img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+header {
+    font-family: "Edu AU VIC WA NT Hand", cursive, Verdana, Geneva, Tahoma, sans-serif;;
+    font-size: 12pt;
+    padding: 0px;
+    margin: 0px;
+    width: 100%;
+    height: 100%;
+    color: white;
+}
+
+header h1 {
+    font-weight: 500;
+    font-size: 32pt;
+}
+
+header h2 {
+    font-weight: 500;
+}
+
+header h1,h2 {
+    text-align: center;
+    color: white;
+    margin: 10px
+}
+
+header hr {
+    border-radius: .75em;
+    border: white solid 1.35px;
+}
+
+header hr.small {
+    border-radius: .75em;
+    border: white solid 1.35px;
+    width: 10px; 
+}
+
+body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 10pt;
+}
+
+main hr {
+    border-radius: .75em;
+    border: rgba(0, 0, 0, 0.3) solid 1.5px;
+}
+
+.banner {
+    display: block;
+    padding: 10px;
+    background-image: linear-gradient(130deg, #4287f56e, #4232f0);
+    height: 100%;
+}
+
+.mode-selector-container {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    display: flex;
+    margin-top: 10px
+}
+
+.select-menu {
+    margin-left: 10px;
+    color: white;
+}
+
+.select-menu-button {
+    color: white;
+    font-weight: bold;
+    text-align: left;
+    width: 110px;
+    background-color: #4287f5;
+    border-radius: .25em;
+    border-color: transparent;
+}
+
+.select-menu-arrow {
+    float: right;
+}
+
+.select-menu-items-container {
+    border-radius: .25em;
+    background-color: rgba(0,0,0,0.1);
+    text-align: center;
+    font-size: .75em;
+    width: 110px;
+}
+
+.select-menu-items-container span {
+    float: left;
+}
+
+.select-menu-items-container div {
+    padding: 2.5px;
+}
+
+.select-menu-items-container div:first-child:hover {
+    background-color: rgba(0,0,0,0.2);
+    border-top-left-radius: 0.25em;
+    border-top-right-radius: 0.25em;
+}
+
+.select-menu-items-container div:hover {
+    background-color: rgba(0,0,0,0.2);
+    border-left: 3px solid #4287f5;
+}
+
+.select-menu-items-container div:last-child:hover {
+    background-color: rgba(0,0,0,0.2);
+    border-bottom-left-radius: 0.25em;
+    border-bottom-right-radius: 0.25em;
+}
+
+.pin.neutral {
+    background-color: #9e96f1;
+    border: #4232f0 solid 1.5px;
+}
+
+.pin.correct {
+    background-color: #14d179;
+    border: #086408 solid 1.5px;
+}
+
+.pin.wrong {
+    background-color: #e4c00e;
+    border: #976f0b solid 1.5px;
+}
+
+@keyframes wrong2 {
+    0% {
+        background-color: #9e96f1;
+        border: #4232f0 solid 1.5px;
+    }
+    20% {
+        background-color: #9e96f1;
+        border: #4232f0 solid 1.5px;
+    }
+    40% {
+        background-color: #f11010;
+        border: #860808 solid 1.5px;
+    }
+    60% {
+        background-color: #f11010;
+        border: #860808 solid 1.5px;
+    }
+    80% {
+        background-color: #9e96f1;
+        border: #4232f0 solid 1.5px;
+    }
+    100% {
+        background-color: #9e96f1;
+        border: #4232f0 solid 1.5px;
+    }
+}
+
+
+.pin.show-mistake {
+    background-color: #9e96f1;
+    border: #4232f0 solid 1.5px;
+    animation: wrong2 1.5s linear infinite;
+}
+
+.pin.show-mistake-circle span.circle {
+    position: absolute;
+    border-radius: 50%;
+    padding: 3.5px;
+    background-color: rgba(158, 150, 241, 0.5);
+    animation: shrinkCircle 2s ease-out 1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+}
+
+@keyframes shrinkCircle {
+    0% {
+        width: 200px;
+        height: 200px;
+        opacity: 0.7;
+    }
+    100% {
+        width: 50px;
+        height: 50px;
+        opacity: 0;
+    }
+}
+
+.pin.failed {
+    background-color: #f11010;
+    border: #860808 solid 1.5px;
+}
+
+.pin {
+    position: absolute;
+    border-radius: 100%;
+    color: white;
+    padding: 3.5px;
+    display: flex;
+    z-index: 1;
+}
+
+.pin.neutral:hover {
+    background-color: #4287f5;
+}
+
+.pin .pin-name {
+    position: absolute;
+    visibility: hidden;
+    right: auto;
+    left: auto;
+    top: auto;
+    bottom: auto;
+    z-index: 2;
+}
+
+.pin.show .pin-name {
+    visibility: visible;
+    border-radius: .25em;
+    font-size: 8pt;
+}
+
+.pin.neutral .pin-name {
+    background-color: #9e96f1;
+    border: #4232f0 solid 1.5px;
+}
+
+.pin.correct .pin-name {
+    background-color: #14d179;
+    border: #086408 solid 1.5px;
+}
+
+.pin.wrong .pin-name {
+    background-color: #e4c00e;
+    border: #976f0b solid 1.5px;
+}
+
+.pin.failed .pin-name {
+    background-color: #f11010;
+    border: #860808 solid 1.5px;
+}
+
+@keyframes fade-in-out {
+    0% {
+        opacity: 0;
+    }
+    25% {
+        opacity: 100;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.pin.peak .pin-name{
+    border-radius: .25em;
+    font-size: 8pt;
+    opacity: 0;
+    visibility: visible;
+    animation: fade-in-out 3s ease-in-out 1;
+}
+
+
+#pin-template {
+    visibility: hidden;
+}
+
+.map-instructions {
+    color: white;
+    margin-top: 15px;
+    background-color: #4287f56e;
+    border-radius: .25em;
+    border: none;
+    padding: 8px;
+    width: 500px;
+}
+
+.map-instructions span {
+    margin: 10px;
+}
+
+vr {
+  border-left: solid;
+  border-radius: .25em;  
+  border-width: 2px;
+  margin: 10px;
+}

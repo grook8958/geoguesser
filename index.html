@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geoguesser</title>
+    <link rel="stylesheet" href="./index.css">
+    <script type="module" src="index.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Edu+AU+VIC+WA+NT+Guides:wght@400..700&family=Edu+AU+VIC+WA+NT+Hand:wght@400..700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="banner">
+        <div>
+            <h1>Geoguesser</h1>
+            <hr class="small">
+            <h2>Villes Françaises</h2>
+        </div>
+        <hr>
+        <div class="mode-selector-container">
+            <span>Mode Selector: </span>
+            <div id="mode-selector" class="select-menu" style="width:100px;" value="">
+                <button class="select-menu-button" type="button">
+                    <span class="selected">Pin</span>
+                    <svg class="select-menu-arrow" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" width="1.2em" height="1.2em"><path class="select-menu-arrow-path" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 15l7-7l7 7"></path></svg>
+                </button>
+            </div>
+        </div>
+    
+    </header>
+    <main>
+        <div class="map-instructions">
+            <span id="map-instructions-progress">.. /..</span>
+            <vr></vr>
+            <span id="map-instructions-score">0%</span>
+            <span id="map-instructions-time">0:00</span>
+            <vr></vr>
+            <span id="map-instructions-instruction">Click on <strong>...................</strong></span>
+        </div>
+        <br>
+        <div id="map-container" class="mapbox">
+            <img class="map" src="./static/map-carte.png">
+            <button id="pin-template" class="pin neutral" name="example">
+                <span class="circle"></span>
+                <span class="pin-name"></span>
+            </button>
+        </div>
+        <p> 
+            <hr>
+            <h3>Modes</h3>
+            <ul>
+                <li><strong>Pin:</strong> Place cities on map</li>
+                <li><strong>Type:</strong> Enter the name of the cities</li>
+                <li><strong>Type (Hard):</strong> Enter the name of the cities, case sensitive (é,ê,î, etc...)</li>
+            </ul>
+        </p>
+    </main>
+</body>
+</html>
