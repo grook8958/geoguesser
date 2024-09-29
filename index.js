@@ -12,14 +12,34 @@ function onModeSelect(item) {
 /**
  * PAGE INITIALISATION
  */
-let gameStarted = false
+let gameStarted = 0 //0 = not started; 1 = started; -1 = game over
 let score = 0;
 let progress = 0;
 let timer = null;
+
+/**
+ * @type {Array<City>}
+ */
+let remainingCities = [...cities];
+let instructionCity = randomCity(remainingCities).name
 init(modeSelector.data.selected)
 
-function randomCity() {
-    return cities[Util.getRandomNumber(0, cities.length-1)]
+/**
+ * @typedef {Object} City
+ * @property {string} name
+ * @property {[number, number]} coordinates
+ */
+
+/**
+ * Returns a random city and removes it from the list
+ * @param {Array<City>} cities 
+ * @returns 
+ */
+function randomCity(cities) {
+    const i = Util.getRandomNumber(0, cities.length-1);
+    const city = cities[i];
+    cities.splice(i,1);
+    return city;
 }
 
 function clear() {
@@ -57,7 +77,7 @@ function init(gamemode) {
     placePins();
     switch(gamemode) {
         case('Pin'):
-            instructions.innerHTML = `Click on <strong>${randomCity().name}</strong>`;
+            instructions.innerHTML = `Click on <strong>${instructionCity}</strong>`;
             break;
         case('Type'):
             instructions.innerText = 'Type the name of the city in the box';
@@ -74,8 +94,8 @@ function init(gamemode) {
  * @param {Element} pin 
  */
 function failedPin(pin) {
-    pin.classList.add('wrong2', 'wrong-circle');
-    pin.classList.remove('neutral');
+    pin.classList.add('failed');
+    pin.classList.remove('neutral', 'show-mistake-circle', 'show-mistake');
 }
 
 /**
@@ -139,25 +159,119 @@ function clearPin(pin) {
 }
 
 
-let lastPin = null;
+let lastClickedPin = null;
+let failedAttempts = 0;
 /**
  * 
  * @param {Event} event 
  */
 function pinOnClick(event) {
+    //Check gamemode
     if (modeSelector.data.selected !== 'Pin') return;
-    if (gameStarted == false){timer = startTimer();}
-    gameStarted = true
-    
+    if (gameStarted == -1) return;
+
+    //Start timer + game
+    if (gameStarted == 0){timer = startTimer();}
+    gameStarted = 1
+
+    // Get the corrent pin
+    const answerPin = document.querySelector(`[name="${instructionCity}"]`);
+
     /**
+     * The pin that was clicked
      * @type {Element}
      */
     const pin = event.target;
-    clearPin(lastPin)
-    peak(pin)
-    lastPin = pin;
-    //wrongPin(pin);
+    const pinName = pin.getAttribute("name");
+
+    //Clear last pin && correct pin
+    clearPin(lastClickedPin);
+    //clearPin(answerPin)
+    lastClickedPin = pin;
+
+    
+
+    // Clicked wrong pin
+    if (pinName != instructionCity) {
+        failedAttempts++;   
+        if (failedAttempts >= 3) {
+            showMistakePin(answerPin);
+            return;
+        } else {
+            return;
+        }
+    }
+
+    /**
+     * Score Calculations:
+     * - Each city worth 30pts
+     * - Correct = 30pts
+     * - 1 failed attempt = 20pts
+     * - 2 failed attempts = 10pts
+     * - 3 failed attemps = 0pts
+     */
+
+    // Clicked correct pin
+    switch(failedAttempts) {
+        case(0):
+            correctPin(answerPin);
+            score += 30;
+            break;
+        case(1):
+            wrongPin(answerPin);
+            score += 20;
+            break;
+        case(2):
+            wrongPin(answerPin);
+            score += 10;
+            break;
+        case(3):
+            failedPin(answerPin);
+            break;
+    }
+
+    progress++
+    failedAttempts = 0;
+    updateProgress()
+    updateInstruction()
+
+    //instructionCity = randomCity(remainingCities).name
 }
+
+function updateProgress() {
+    const number = document.getElementById('map-instructions-progress');
+    number.innerHTML = `${progress}/${cities.length}`;
+}
+
+function updateInstruction() {
+    if (remainingCities.length == 0) {
+        gameOver();
+        return;
+    }
+    instructionCity = randomCity(remainingCities).name
+    const instructions = document.getElementById('map-instructions-instruction');
+    instructions.innerHTML = `Click on <strong>${instructionCity}</strong>`;
+}
+
+function gameOver() {
+    clearInterval(timer)
+    const instructions = document.getElementById('map-instructions-instruction');
+    instructions.innerHTML = `Gamer Over`;
+    gameStarted = -1;
+}
+
+
+
+
+
+/**
+ * ----------------------------------------------------------------------------------------------------------
+ * ==========================================================================================================
+ * ----------------------------------------------------------------------------------------------------------
+ */
+
+
+
 
 /**
  * Point Coordinates Placer

@@ -176,7 +176,6 @@ main hr {
 .pin.show-mistake-circle span.circle {
     position: absolute;
     border-radius: 50%;
-    padding: 3.5px;
     background-color: rgba(158, 150, 241, 0.5);
     animation: shrinkCircle 2s ease-out 1;
     top: 50%;
@@ -192,8 +191,8 @@ main hr {
         opacity: 0.7;
     }
     100% {
-        width: 50px;
-        height: 50px;
+        width: 0px;
+        height: 0px;
         opacity: 0;
     }
 }
@@ -210,6 +209,10 @@ main hr {
     padding: 3.5px;
     display: flex;
     z-index: 1;
+}
+
+.pin span {
+    pointer-events: none;
 }
 
 .pin.neutral:hover {
