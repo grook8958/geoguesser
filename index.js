@@ -120,9 +120,11 @@ function wrongPin(pin) {
  * Show the mistake (failedAttempts = 3)
  * @param {Element} pin 
  */
-function showMistakePin(pin) {
+async function showMistakePin(pin) {
     pin.classList.add('show-mistake', 'show-mistake-circle');
     pin.classList.remove('neutral');
+    await Util.wait(2000)
+    pin.classList.remove('show-mistake-circle');
 }
 
 /**
@@ -165,7 +167,7 @@ let failedAttempts = 0;
  * 
  * @param {Event} event 
  */
-function pinOnClick(event) {
+async function pinOnClick(event) {
     //Check gamemode
     if (modeSelector.data.selected !== 'Pin') return;
     if (gameStarted == -1) return;
@@ -208,7 +210,7 @@ function pinOnClick(event) {
      * - Correct = 30pts
      * - 1 failed attempt = 20pts
      * - 2 failed attempts = 10pts
-     * - 3 failed attemps = 0pts
+     * - 3+ failed attemps = 0pts
      */
 
     // Clicked correct pin
@@ -225,17 +227,16 @@ function pinOnClick(event) {
             wrongPin(answerPin);
             score += 10;
             break;
-        case(3):
+        default:
             failedPin(answerPin);
             break;
     }
 
-    progress++
+    progress++;
     failedAttempts = 0;
-    updateProgress()
-    updateInstruction()
-
-    //instructionCity = randomCity(remainingCities).name
+    updateProgress();
+    updateInstruction();
+    updateScore();
 }
 
 function updateProgress() {
@@ -253,8 +254,14 @@ function updateInstruction() {
     instructions.innerHTML = `Click on <strong>${instructionCity}</strong>`;
 }
 
+function updateScore() {
+    const scorePerc = (score / (progress * 30) ) * 100;
+    const scoreElement = document.getElementById('map-instructions-score');
+    scoreElement.innerHTML = `${Math.round(scorePerc)}%`;
+}
+
 function gameOver() {
-    clearInterval(timer)
+    clearInterval(timer);
     const instructions = document.getElementById('map-instructions-instruction');
     instructions.innerHTML = `Gamer Over`;
     gameStarted = -1;

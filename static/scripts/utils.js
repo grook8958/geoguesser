@@ -20,3 +20,9 @@ export function removeItem(item, array) {
         array.splice(index, 1);
     }
 }
+
+export async function wait(time) {
+    return await new Promise((resolve, reject) => {
+        setTimeout(resolve, time);
+    });
+}
