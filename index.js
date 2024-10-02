@@ -65,6 +65,7 @@ function placePins() {
         pin.style.right = `${city.coordinates[1]}px`
         pin.children[1].innerHTML = city.name;
         pin.addEventListener('click', pinOnClick)
+        pin.children[2].addEventListener('keypress', pinOnEnter);
     }
 }
 
@@ -81,6 +82,13 @@ function init(gamemode) {
             break;
         case('Type'):
             instructions.innerText = 'Type the name of the city in the box';
+            const cityPin = document.querySelector(`[name="${instructionCity}"]`)
+            showInput(cityPin);
+            break;
+        case('Type (Hard)'):
+            instructions.innerText = 'Type the name of the city in the box';
+            const cityPin2 = document.querySelector(`[name="${instructionCity}"]`)
+            showInput(cityPin2);
             break;
     }
     number.innerText = `0/${cities.length}`;
@@ -128,12 +136,35 @@ async function showMistakePin(pin) {
 }
 
 /**
+ * Show the input of a pin
+ * @param {Element} pin
+ */
+function showInput(pin) {
+    pin.classList.add('show-input');
+    const input = pin.children[2].children[1];
+    input.select();
+    return;
+}
+
+/**
+ * Hide the input of a pin
+ * @param {Element} pin
+ */
+function hideInput(pin) {
+    pin.classList.remove('show-input');
+    return;
+}
+
+/**
  * Peak the name of the pin
  * @param {Element} pin 
  */
 function peak(pin) {
-    if (pin.classList.contains('neutral')) return;
     pin.classList.add('peak');
+}
+
+function clearInput(pin) {
+    pin.children[2].value = '';
 }
 
 function startTimer() {
@@ -160,9 +191,53 @@ function clearPin(pin) {
     pin.classList.remove(pin.classList.remove('peak', 'show-mistake-circle', 'show-mistake'))
 }
 
+/**
+ * Hint answer
+ * @param {Element} pin
+ */
+function hintAnswer(pin, failedAttempts) {
+    pin.classList.add('show-hint')
+    const answer = pin.getAttribute('name');
+    const hintElement = pin.querySelector('.hint');
+    const answerArray = answer.split('');
+    let hintArray = [...answerArray]
+    hintArray.forEach((e, i) => hintArray[i] = '*');
+    console.log(failedAttempts)
+    switch (failedAttempts) {
+        case 1:
+            break;
+        case 2:
+            hintArray[hintArray.length-1] = answer[answer.length-1];
+            break;
+        case 3:
+            hintArray[hintArray.length-1] = answer[answer.length-1];
+            hintArray[0] = answer[0];
+            break;
+        case 4:
+            hintArray[hintArray.length-1] = answer[answer.length-1];
+            hintArray[0] = answer[0];
+            hintArray[hintArray.length-2] = answer[answer.length-2];
+            hintArray[1] = answer[1];
+            break;
+        default:
+            hintArray = answerArray;
+            break;
+    }
+    hintElement.innerHTML = `Hint: ${hintArray.join('')}`;
+}
+
+/**
+ * Wrong answer input
+ * @param {Element} pin
+ */
+function wrongAnswer(pin) {
+    pin.classList.add('wrong-answer');
+}
+
 
 let lastClickedPin = null;
 let failedAttempts = 0;
+
 /**
  * 
  * @param {Event} event 
@@ -195,7 +270,8 @@ async function pinOnClick(event) {
 
     // Clicked wrong pin
     if (pinName != instructionCity) {
-        failedAttempts++;   
+        failedAttempts++;
+        peak(pin);
         if (failedAttempts >= 3) {
             showMistakePin(answerPin);
             return;
@@ -208,9 +284,11 @@ async function pinOnClick(event) {
      * Score Calculations:
      * - Each city worth 30pts
      * - Correct = 30pts
-     * - 1 failed attempt = 20pts
-     * - 2 failed attempts = 10pts
-     * - 3+ failed attemps = 0pts
+     * - 1 failed attempt = 25pts
+     * - 2 failed attempts = 20pts
+     * - 3 failed attempts = 15pts
+     * - 4 failed attemps = 10pts
+     * - 5+ failed attemps = 0pts
      */
 
     // Clicked correct pin
@@ -221,11 +299,19 @@ async function pinOnClick(event) {
             break;
         case(1):
             wrongPin(answerPin);
-            score += 20;
+            score += 25;
             break;
         case(2):
             wrongPin(answerPin);
+            score += 15;
+            break;
+        case(3):
+            wrongPin(answerPin)
             score += 10;
+            break;
+        case(4):
+            failedPin(answerPin)
+            score += 5;
             break;
         default:
             failedPin(answerPin);
@@ -235,16 +321,89 @@ async function pinOnClick(event) {
     progress++;
     failedAttempts = 0;
     updateProgress();
-    updateInstruction();
+    updatePinInstruction();
     updateScore();
 }
+
+/**
+ * 
+ * @param {Event} event 
+ */
+async function pinOnEnter(event) {
+    //Check gamemode
+    if (modeSelector.data.selected !== 'Type' && modeSelector.data.selected !== 'Type (Hard)') return;
+    if (gameStarted == -1) return;
+    event.target.parentElement.parentElement.classList.remove('wrong-answer')
+    if (event.key !== 'Enter') return;
+    if (event.target.value.length <= 0) return;
+    if (gameStarted == 0) { timer = startTimer(); }
+    gameStarted = 1;
+
+    /**
+     * The pin that was typed in
+     * @type {HTMLInputElement}
+     */ 
+    const input = event.target;   
+    const userEntry = input.value;
+
+    if (modeSelector.data.selected === 'Type') {
+        if (Util.removeDiacritics(userEntry).toLowerCase() !== Util.removeDiacritics(instructionCity).toLowerCase()) {
+            failedAttempts++
+            wrongAnswer(input.parentElement.parentElement)
+            console.log(failedAttempts)
+            hintAnswer(input.parentElement.parentElement, failedAttempts);
+            return;
+        }
+    } else if (modeSelector.data.selected === 'Type (Hard)') {
+        if (userEntry !== instructionCity) {
+            failedAttempts++
+            wrongAnswer(input.parentElement.parentElement)
+            return;
+        }
+    }
+    
+    /**
+     * Score Calculations:
+     * - Each city worth 30pts
+     * - Correct = 30pts
+     * - 1 failed attempt = 20pts
+     * - 2 failed attempts = 10pts
+     * - 3+ failed attemps = 0pts
+     */
+
+    // Clicked correct pin
+    switch(failedAttempts) {
+        case(0):
+            correctPin(input.parentElement.parentElement);
+            score += 30;
+            break;
+        case(1):
+            wrongPin(input.parentElement.parentElement);
+            score += 20;
+            break;
+        case(2):
+            wrongPin(input.parentElement.parentElement);
+            score += 10;
+            break;
+        default:
+            failedPin(input.parentElement.parentElement);
+            break;
+    }
+
+    progress++;
+    failedAttempts = 0;
+    hideInput(input.parentElement.parentElement);
+    updateProgress();
+    updateTypeInstruction();
+    updateScore();
+} 
 
 function updateProgress() {
     const number = document.getElementById('map-instructions-progress');
     number.innerHTML = `${progress}/${cities.length}`;
 }
 
-function updateInstruction() {
+function updatePinInstruction() {
     if (remainingCities.length == 0) {
         gameOver();
         return;
@@ -252,6 +411,16 @@ function updateInstruction() {
     instructionCity = randomCity(remainingCities).name
     const instructions = document.getElementById('map-instructions-instruction');
     instructions.innerHTML = `Click on <strong>${instructionCity}</strong>`;
+}
+
+function updateTypeInstruction() {
+    if (remainingCities.length == 0) {
+        gameOver();
+        return;
+    }
+    instructionCity = randomCity(remainingCities).name
+    const cityPin = document.querySelector(`[name="${instructionCity}"]`)
+    showInput(cityPin);
 }
 
 function updateScore() {

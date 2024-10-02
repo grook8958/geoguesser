@@ -271,8 +271,100 @@ main hr {
     border-radius: .25em;
     font-size: 8pt;
     opacity: 0;
+    padding: 2px;
     visibility: visible;
     animation: fade-in-out 3s ease-in-out 1;
+    z-index: 2;
+}
+
+.pin input {
+    visibility: hidden;
+    pointer-events: none;
+    position: relative;
+    width: 100px;
+}
+
+.pin.show-input {
+    pointer-events: none;
+    z-index: 2;
+}
+
+.pin span.hint {
+    background-color: #9e96f1;
+    border: #4232f0 solid 1px;
+    visibility: hidden;
+    pointer-events: none;
+    position: absolute;
+    padding: 2px;
+    border-radius: .25em;
+    font-size: 10pt;
+    text-align: center;
+    overflow: visible;
+    overflow-y: visible;
+    top: auto;
+    bottom: 100%;
+    width: 100px;
+    max-width: 100px;
+    transform: translate(0%, -5px);
+}
+
+.pin.show-input span.hint {
+    visibility: hidden;
+}
+
+.pin.show-input.show-hint span.hint {
+    visibility: visible;
+}
+
+.pin.show-input input {
+    visibility: visible;
+    pointer-events: all;
+    border-radius: .25em;
+    border: #4287f56e solid 2px;
+    background-color: #a5c4f5;
+    color: white;
+}
+
+.pin.show-input input:focus {
+    border: #4287f56e solid 2px;
+    outline: none;
+}
+
+.pin.show-input input:active {
+    border: #4287f56e solid 2px;
+    outline: none;
+}
+
+.pin.show-input.wrong-answer input {
+    color: red;
+}
+
+.pin.show-input .input-container {
+    position: absolute;
+    display: flex;
+}
+
+.pin .input-container {
+    pointer-events: none;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    width: auto;
+    height: auto;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.pin.show-input .input-container::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -16px;
+    transform: translateX(-50%);
+    border-width: 8px;
+    border-style: solid;
+    border-color: #a5c4f59d transparent transparent transparent;
 }
 
 
