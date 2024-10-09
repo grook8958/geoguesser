@@ -423,10 +423,10 @@ vr {
 
 .end-popup .results {
     align-items: center;
-    width: 230px;
+    width: 250px;
     font-size: 12pt;
     text-align: center;
-
+    margin-left: -5px;
 }
 
 .end-popup .body p {
