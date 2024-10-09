@@ -9,6 +9,25 @@ function onModeSelect(item) {
     init(modeSelector.data.selected)
 }
 
+//Close end popup
+const endPopup = document.querySelector('.end-popup');
+document.querySelector('.end-popup .btn.close').addEventListener('click', closeEndPopup);
+function showEndPopup(score, time) {
+    if (!score) score = '100%'
+    else if (!time) time = '1:00'
+    endPopup.classList.add('show');
+    const scoreEl = endPopup.querySelector('.end-popup .body span.score');
+    const timeEl = endPopup.querySelector('.end-popup .body span.time');
+    endPopup.setAttribute('data-score', score);
+    endPopup.setAttribute('data-time', time);
+    scoreEl.innerHTML = `Score: <strong>${score}</strong>`;
+    timeEl.innerHTML = `Time: <strong>${time}</strong>`;
+}
+
+function closeEndPopup() {
+    endPopup.classList.remove('show');
+}
+
 /**
  * PAGE INITIALISATION
  */
@@ -431,6 +450,7 @@ function gameOver() {
     const instructions = document.getElementById('map-instructions-instruction');
     instructions.innerHTML = `Gamer Over`;
     gameStarted = -1;
+    showEndPopup(document.getElementById('map-instructions-score').innerText, document.getElementById('map-instructions-time'));
 }
 
 

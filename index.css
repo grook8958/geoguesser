@@ -394,3 +394,79 @@ vr {
   border-width: 2px;
   margin: 10px;
 }
+
+.end-popup {
+    visibility: hidden;
+    display: inline-block;
+    position: absolute;
+    top: 100px;
+    right: 100px;
+    height: 240px;
+    width: 300px;
+    background-color: rgb(186, 210, 245);
+    border: solid rgb(186, 210, 245) 1px;
+    color: white;
+    border-radius: .75em;
+    z-index: 3;
+}
+
+.end-popup h2 {
+    font-size: 20pt;
+}
+
+
+.end-popup .body {
+    margin: 30px;
+    align-items: center;
+    position: relative;
+}
+
+.end-popup .results {
+    align-items: center;
+    width: 230px;
+    font-size: 12pt;
+    text-align: center;
+
+}
+
+.end-popup .body p {
+    font-size: 10pt;
+    margin-top: 20px;
+    margin-bottom: 2px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.end-popup .body input {
+    margin-left: 30px;
+    margin-right: 30px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: solid #4287f5 2px;
+    border-radius: .25em;
+    background-color: #98bcf7;
+    padding: 3px;
+    color: white;
+}
+
+.end-popup .body input:focus {
+    outline: none;
+}
+
+.end-popup .body input:active {
+    outline: none;
+}
+
+.end-popup .btn.close {
+    pointer-events: all;
+    float: right;
+    background-color: transparent;
+    border: none;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.end-popup.show {
+    visibility: visible;
+}
+}
