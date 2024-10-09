@@ -70,6 +70,7 @@ function placePins() {
 }
 
 function init(gamemode) {
+    gameStarted = 0;
     const instructions = document.getElementById('map-instructions-instruction');
     const score = document.getElementById('map-instructions-score');
     const number = document.getElementById('map-instructions-progress');
@@ -263,10 +264,7 @@ async function pinOnClick(event) {
 
     //Clear last pin && correct pin
     clearPin(lastClickedPin);
-    //clearPin(answerPin)
     lastClickedPin = pin;
-
-    
 
     // Clicked wrong pin
     if (pinName != instructionCity) {
@@ -284,11 +282,9 @@ async function pinOnClick(event) {
      * Score Calculations:
      * - Each city worth 30pts
      * - Correct = 30pts
-     * - 1 failed attempt = 25pts
-     * - 2 failed attempts = 20pts
-     * - 3 failed attempts = 15pts
-     * - 4 failed attemps = 10pts
-     * - 5+ failed attemps = 0pts
+     * - 1 failed attempt = 20pts
+     * - 2 failed attempts = 10pts
+     * - 3+ failed attemps = 0pts
      */
 
     // Clicked correct pin
@@ -299,19 +295,11 @@ async function pinOnClick(event) {
             break;
         case(1):
             wrongPin(answerPin);
-            score += 25;
+            score += 20;
             break;
         case(2):
             wrongPin(answerPin);
-            score += 15;
-            break;
-        case(3):
-            wrongPin(answerPin)
             score += 10;
-            break;
-        case(4):
-            failedPin(answerPin)
-            score += 5;
             break;
         default:
             failedPin(answerPin);
@@ -361,14 +349,15 @@ async function pinOnEnter(event) {
             return;
         }
     }
-    
     /**
      * Score Calculations:
      * - Each city worth 30pts
      * - Correct = 30pts
-     * - 1 failed attempt = 20pts
-     * - 2 failed attempts = 10pts
-     * - 3+ failed attemps = 0pts
+     * - 1 failed attempt = 25pts
+     * - 2 failed attempts = 20pts
+     * - 3 failed attempts = 15pts
+     * - 4 failed attemps = 10pts
+     * - 5+ failed attemps = 0pts
      */
 
     // Clicked correct pin
@@ -379,11 +368,19 @@ async function pinOnEnter(event) {
             break;
         case(1):
             wrongPin(input.parentElement.parentElement);
-            score += 20;
+            score += 25;
             break;
         case(2):
             wrongPin(input.parentElement.parentElement);
+            score += 15;
+            break;
+        case(3):
+            wrongPin(input.parentElement.parentElement)
             score += 10;
+            break;
+        case(4):
+            failedPin(input.parentElement.parentElement)
+            score += 5;
             break;
         default:
             failedPin(input.parentElement.parentElement);
