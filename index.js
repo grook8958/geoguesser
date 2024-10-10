@@ -450,7 +450,7 @@ function gameOver() {
     const instructions = document.getElementById('map-instructions-instruction');
     instructions.innerHTML = `Gamer Over`;
     gameStarted = -1;
-    showEndPopup(document.getElementById('map-instructions-score').innerText, document.getElementById('map-instructions-time'));
+    showEndPopup(document.getElementById('map-instructions-score').innerText, document.getElementById('map-instructions-time').innerText);
 }
 
 
