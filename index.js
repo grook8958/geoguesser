@@ -227,6 +227,11 @@ async function refreshScoreboard() {
 
 }
 
+/**
+ * =============================================
+ *            GAME INITIALISATION
+ * =============================================
+ */
 
 const modeSelector = new HTMLSelectMenu('mode-selector', ['Pin', 'Type', 'Type (Hard)'], onModeSelect);
 
