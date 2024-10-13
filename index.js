@@ -496,7 +496,6 @@ function hintAnswer(pin, failedAttempts) {
     const answerArray = answer.split('');
     let hintArray = [...answerArray]
     hintArray.forEach((e, i) => hintArray[i] = '*');
-    console.log(failedAttempts)
     switch (failedAttempts) {
         case 1:
             break;
@@ -630,7 +629,6 @@ async function pinOnEnter(event) {
         if (Util.removeDiacritics(userEntry).toLowerCase() !== Util.removeDiacritics(instructionCity).toLowerCase()) {
             failedAttempts++
             wrongAnswer(input.parentElement.parentElement)
-            console.log(failedAttempts)
             hintAnswer(input.parentElement.parentElement, failedAttempts);
             return;
         }
