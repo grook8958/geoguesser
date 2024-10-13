@@ -635,7 +635,8 @@ async function pinOnEnter(event) {
     } else if (modeSelector.data.selected === 'Type (Hard)') {
         if (userEntry !== instructionCity) {
             failedAttempts++
-            wrongAnswer(input.parentElement.parentElement)
+            wrongAnswer(input.parentElement.parentElement);
+            hintAnswer(input.parentElement.parentElement, failedAttempts);
             return;
         }
     }
