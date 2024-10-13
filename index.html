@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Edu+AU+VIC+WA+NT+Guides:wght@400..700&family=Edu+AU+VIC+WA+NT+Hand:wght@400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
     <header class="banner">
@@ -30,35 +31,118 @@
     
     </header>
     <main>
-        <div class="map-instructions">
-            <span id="map-instructions-progress">.. /..</span>
-            <vr></vr>
-            <span id="map-instructions-score">0%</span>
-            <span id="map-instructions-time">0:00</span>
-            <vr></vr>
-            <span id="map-instructions-instruction">Click on <strong>...................</strong></span>
+        <div class="title-container inline-container">
+            <div class="title map-instructions">
+                <span id="map-instructions-progress">.. /..</span>
+                <vr></vr>
+                <span id="map-instructions-score">0%</span>
+                <span id="map-instructions-time">0:00</span>
+                <vr></vr>
+                <span id="map-instructions-instruction">Click on <strong>...................</strong></span>
+            </div>
+            <div class="title scoreboard">
+                <span>Scoreboard</span>
+            </div>
         </div>
         <br>
-        <div id="map-container" class="mapbox">
-            <img class="map" src="./static/map-carte.png">
-            <button id="pin-template" class="pin neutral" name="example">
-                <span class="circle"></span>
-                <span class="pin-name"></span>
-                <div class="input-container">
-                    <span class="hint">Hint: *****</span>
-                    <input type="text">
-                </div>
-            </button>
-            <div class="end-popup">
-                <button class="btn close"><i class="fa fa-close" style="color:white;"></i></button>
-                <div class="body">
-                    <h2>Game Over</h2>
-                    <br>
-                    <div class="results">
-                        <span class="score">Score: <strong>100%</strong></span>
-                        <vr></vr>
-                        <span class="time">Time: <strong>1:00</strong></span>
+        <div class="inline-container">
+            <div id="map-container" class="mapbox">
+                <img class="map" src="./static/map-carte.png">
+                <button id="pin-template" class="pin neutral" name="example">
+                    <span class="circle"></span>
+                    <span class="pin-name"></span>
+                    <div class="input-container">
+                        <span class="hint">Hint: *****</span>
+                        <input type="text">
                     </div>
+                </button>
+                <div class="end-popup">
+                    <button class="btn close"><i class="fa fa-close" style="color:white;"></i></button>
+                    <div class="body">
+                        <h2>Game Over</h2>
+                        <br>
+                        <div class="results">
+                            <span class="score">Score: <strong>100%</strong></span>
+                            <vr></vr>
+                            <span class="time">Time: <strong>1:00</strong></span>
+                        </div>
+                        <p>Enter a name to save the score:</p>
+                        <input name="name" autocomplete="name" type="text">
+                        <div class="h-btns">
+                            <button class="btn save-score">Save Score</button>
+                            <button class="btn restart">Restart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="scoreboard container">
+                <h2>Pin</h2>
+                <div class="table-container">
+                    <table id="pin">
+                        <thead>
+                          <th>Name</th>
+                          <th>Score</th>
+                          <th>Time</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Clement</td>
+                                <td>100%</td>
+                                <td>1:00</td>
+                            </tr>
+                            <tr>
+                                <td>Tets</td>
+                                <td>89%</td>
+                                <td>2:00</td>
+                            </tr>
+                        </tbody>
+                      </table>
+                </div>
+                <hr>
+                <h2>Type</h2>
+                <div class="table-container">
+                    <table id="type">
+                        <thead>
+                          <th>Name</th>
+                          <th>Score</th>
+                          <th>Time</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Clement</td>
+                                <td>100%</td>
+                                <td>1:00</td>
+                            </tr>
+                            <tr>
+                                <td>Tets</td>
+                                <td>89%</td>
+                                <td>2:00</td>
+                            </tr>
+                        </tbody>
+                      </table>
+                </div>
+                <hr>
+                <h2>Type (Hard)</h2>
+                <div class="table-container">
+                    <table id="type-hard">
+                        <thead>
+                          <th>Name</th>
+                          <th>Score</th>
+                          <th>Time</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Clement</td>
+                                <td>100%</td>
+                                <td>1:00</td>
+                            </tr>
+                            <tr>
+                                <td>Tets</td>
+                                <td>89%</td>
+                                <td>2:00</td>
+                            </tr>
+                        </tbody>
+                      </table>
                 </div>
             </div>
         </div>

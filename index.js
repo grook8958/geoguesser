@@ -1,6 +1,232 @@
 import HTMLSelectMenu from "./static/scripts/HTMLSelectMenu.js";
 import * as Util from "./static/scripts/utils.js";
 import cities from "./static/cities.json" with {type: 'json'};
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore.js";
+
+/**
+ * ===========================================
+ *          DATABASE INITIALISATION
+ * ===========================================
+ */
+const firebaseConfig = {
+    apiKey: "AIzaSyAO1XqyAml7MVrkib91-v2nsgaZpstSFrQ", //Production Key
+    authDomain: "geoguesser-9b056.firebaseapp.com",
+    projectId: "geoguesser-9b056",
+    storageBucket: "geoguesser-9b056.appspot.com",
+    messagingSenderId: "220652800613",
+    appId: "1:220652800613:web:be145751adf04b94dfd48c",
+    measurementId: "G-2FY5ND2KJZ"
+};
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+// Initialize Firebase Storage and Firestore
+const db = getFirestore(app);
+
+/**
+ * @typedef {Object} DBScoreDoc
+ * @property {string} name
+ * @property {string} mode
+ * @property {number} score
+ * @property {string} time
+ */
+
+/**
+ * Add a score document to the DB
+ * @param {DBScoreDoc} param0
+ */
+async function addScoreboardData({name, mode, score, time}) {
+    try {
+        // Reference to the collection where you want to add data
+        const docRef = await addDoc(collection(db, "scoreboard"), {
+            name,
+            mode,
+            score,
+            time
+        });
+        console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+        console.error("Error adding document: ", e);
+    }
+}
+
+/**
+ * Gets all the scoreboard data
+ * @returns {Array<DBScoreDoc>}
+ */
+async function getAllScoreboardData() {
+    try {
+        // Reference to the "users" collection
+        const querySnapshot = await getDocs(collection(db, "scoreboard"));
+  
+        // Loop through all documents and log their data
+        const docs = [];
+        querySnapshot.forEach((doc) => {
+            console.log(`${doc.id} =>`, doc.data());
+            return docs.push(doc.data());
+        });
+        return docs;
+    } catch (e) {
+        console.error("Error reading documents: ", e);
+    }
+} 
+
+/**
+ * Get all the documents corresponding to "mode"
+ * @param {Array<DBScoreDoc>} docs 
+ * @param {string} mode
+ * @return {Array<DBScoreDoc>}
+ */
+function getDocMode(docs, mode) {
+    return docs.filter(doc => {
+        if (doc.mode === mode) {
+            return doc;
+        }
+    });
+}
+
+/**
+ * Get all the docs of 'Pin' mode
+ * @param {Array<DBScoreDoc>} docs 
+ * @returns {Array<DBScoreDoc>}
+ */
+function getDocPin(docs) {
+    return getDocMode(docs, 'Pin');
+}
+
+/**
+ * Get all the docs of 'Type' mode
+ * @param {Array<DBScoreDoc>} docs 
+ * @returns {Array<DBScoreDoc>}
+ */
+function getDocType(docs) {
+    return getDocMode(docs, 'Type');
+}
+
+/**
+ * Get all the docs of 'Type (Hard)' mode
+ * @param {Array<DBScoreDoc>} docs 
+ * @returns {Array<DBScoreDoc>}
+ */
+function getDocTypeHard(docs) {
+    return getDocMode(docs, 'Type (Hard)');
+}
+
+/**
+ * Sort the docs by highest score and lowest time
+ * @param {Array<DBScoreDoc>} docs 
+ * @returns {Array<DBScoreDoc>}
+ */
+function sortDocs(docs) {
+    return docs.sort((a, b) => {
+        const aTime = Number(a.time.split(':')[1]) + (Number(a.time.split(':')[0])*60);
+        const bTime = Number(b.time.split(':')[1]) + (Number(b.time.split(':')[0])*60);
+        if (a.score !== b.score) {
+            return b.score - a.score;
+        }
+        return aTime - bTime;
+    });
+}
+
+async function refreshScoreboard() {
+    const rawDocs = await getAllScoreboardData();
+
+    //Pin
+    const pinTableBody = document.querySelector('#pin tbody');
+    pinTableBody.innerHTML = '';
+    
+    const pinDocs = sortDocs(getDocPin(rawDocs));
+
+    pinDocs.forEach(doc => {
+        //Create new row
+        const row = document.createElement('tr');
+
+        //Create name cell
+        const nameCell = document.createElement('td');
+        nameCell.textContent = doc.name;
+
+        //Create time cell
+        const timeCell = document.createElement('td');
+        timeCell.textContent = doc.time;
+
+        //Create score cell
+        const scoreCell = document.createElement('td');
+        scoreCell.textContent = doc.score.toString(10);
+
+        //Append the cells to the row
+        row.appendChild(nameCell)
+        row.appendChild(scoreCell);
+        row.appendChild(timeCell);
+
+        //Add the row to the table body
+        pinTableBody.appendChild(row);
+    });
+
+    //Type
+    const typeTableBody = document.querySelector('#type tbody');
+    typeTableBody.innerHTML = '';
+    
+    const typeDocs = sortDocs(getDocType(rawDocs));
+
+    typeDocs.forEach(doc => {
+        //Create new row
+        const row = document.createElement('tr');
+
+        //Create name cell
+        const nameCell = document.createElement('td');
+        nameCell.textContent = doc.name;
+
+        //Create time cell
+        const timeCell = document.createElement('td');
+        timeCell.textContent = doc.time;
+
+        //Create score cell
+        const scoreCell = document.createElement('td');
+        scoreCell.textContent = doc.score.toString(10);
+
+        //Append the cells to the row
+        row.appendChild(nameCell)
+        row.appendChild(scoreCell);
+        row.appendChild(timeCell);
+
+        //Add the row to the table body
+        typeTableBody.appendChild(row);
+    });
+
+    //Type
+    const typeHardTableBody = document.querySelector('#type-hard tbody');
+    typeHardTableBody.innerHTML = '';
+    
+    const typeHardDocs = sortDocs(getDocTypeHard(rawDocs));
+
+    typeHardDocs.forEach(doc => {
+        //Create new row
+        const row = document.createElement('tr');
+
+        //Create name cell
+        const nameCell = document.createElement('td');
+        nameCell.textContent = doc.name;
+
+        //Create time cell
+        const timeCell = document.createElement('td');
+        timeCell.textContent = doc.time;
+
+        //Create score cell
+        const scoreCell = document.createElement('td');
+        scoreCell.textContent = doc.score.toString(10);
+
+        //Append the cells to the row
+        row.appendChild(nameCell)
+        row.appendChild(scoreCell);
+        row.appendChild(timeCell);
+
+        //Add the row to the table body
+        typeHardTableBody.appendChild(row);
+    });
+
+}
+
 
 const modeSelector = new HTMLSelectMenu('mode-selector', ['Pin', 'Type', 'Type (Hard)'], onModeSelect);
 
@@ -11,7 +237,42 @@ function onModeSelect(item) {
 
 //Close end popup
 const endPopup = document.querySelector('.end-popup');
+const endPopupInput = endPopup.querySelector('input');
+const saveScoreBtn = endPopup.querySelector('.btn.save-score');
 document.querySelector('.end-popup .btn.close').addEventListener('click', closeEndPopup);
+
+//Save score
+saveScoreBtn.addEventListener('click', async (e) => {
+    if (endPopupInput.value <= 0) {
+        saveScoreBtn.classList.add('no-name-error');
+        await Util.wait(3000);
+        saveScoreBtn.classList.remove('no-name-error');
+        return;
+    }
+    const score = endPopup.getAttribute('data-score');
+    const time = endPopup.getAttribute('data-time');
+    const mode = modeSelector.data.selected;
+    const name = endPopupInput.value;
+    endPopup.classList.add('wait');
+    await addScoreboardData({
+        mode: mode,
+        name: name,
+        score: Number.parseInt(score.replace('%', ''), 10),
+        time: time,
+    });
+    endPopup.classList.add('remove');
+    saveScoreBtn.classList.add('saved');
+    await refreshScoreboard();
+})
+
+//Restart game
+endPopup.querySelector('.btn.restart').addEventListener('click', (e) => {
+    clear();
+    init(modeSelector.data.selected);
+    closeEndPopup();
+})
+
+
 function showEndPopup(score, time) {
     if (!score) score = '100%'
     else if (!time) time = '1:00'
@@ -89,6 +350,7 @@ function placePins() {
 }
 
 function init(gamemode) {
+async function init(gamemode) {
     gameStarted = 0;
     const instructions = document.getElementById('map-instructions-instruction');
     const score = document.getElementById('map-instructions-score');
@@ -114,6 +376,7 @@ function init(gamemode) {
     number.innerText = `0/${cities.length}`;
     time.innerHTML = '0:00';
     score.innerHTML = '0%';
+    await refreshScoreboard();
 }
 
 

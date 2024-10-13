@@ -2,7 +2,8 @@
 
 .mapbox {
     position: relative;
-    border: 1px solid black;
+    border: 2px solid #4287f56e;
+    border-radius: .50em;
     width: 500px;
     height: 500px;
 }
@@ -64,6 +65,7 @@ main hr {
     padding: 10px;
     background-image: linear-gradient(130deg, #4287f56e, #4232f0);
     height: 100%;
+    width: 100%;
 }
 
 .mode-selector-container {
@@ -375,13 +377,16 @@ main hr {
 }
 
 .map-instructions {
-    color: white;
+    width: 500px;
+}
+
+.title {
     margin-top: 15px;
+    color: white;
     background-color: #4287f56e;
     border-radius: .25em;
     border: none;
     padding: 8px;
-    width: 500px;
 }
 
 .map-instructions span {
@@ -457,6 +462,27 @@ vr {
     outline: none;
 }
 
+.end-popup .body .h-btns {
+    margin: 10px;
+    margin-top: 20px;
+    margin-left: 45px;
+    width: fit-content;
+}
+
+.btn {
+    background-color: #4287f5;
+    border: solid #4287f5 1px;
+    border-radius: .25em;
+    color: white;
+    font-weight: bold;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.btn:active {
+    background-color: #2b7bfa;
+}
+
 .end-popup .btn.close {
     pointer-events: all;
     float: right;
@@ -469,4 +495,91 @@ vr {
 .end-popup.show {
     visibility: visible;
 }
+
+.btn.save-score.saved::after {
+    position: absolute;
+    content: "Saved!";
+    background-color: #14d179;
+    border: #086408 solid 1.5px;
+    border-radius: .25em;
+    padding: 2px;
+    top: 150px;
+    left: 65px;
+    cursor: default;
+    font-size: 9pt;
+    z-index: 2;
+    animation: fade-in-out 3s ease-in-out 1;
+    opacity: 0;
+}
+
+.btn.save-score.no-name-error::after {
+    position: absolute;
+    content: "Please enter a name";
+    max-width: 150px;
+    background-color: #f11010;
+    border: #860808 solid 1.5px;
+    border-radius: .25em;
+    padding: 2px;
+    top: 150px;
+    left: 55px;
+    cursor: default;
+    font-size: 9pt;
+    z-index: 2;
+    animation: fade-in-out 3s ease-in-out 1;
+    opacity: 0;
+}
+
+.end-popup .wait {
+    cursor: wait;
+}
+
+.inline-container {
+    display: inline-flex;
+    margin-right: 10px;
+    margin-bottom: 16px;
+}
+
+.scoreboard {
+    margin-left: 30px;
+    width: 300px;
+}
+
+.scoreboard.container {
+    border: 2px solid #4287f56e;
+    border-radius: .50em;
+    color: black;
+    align-items: center;
+    text-align: center;
+}
+
+.scoreboard.container h2 {
+    color: black;
+}
+
+.scoreboard.container .table-container {
+    height: 110px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin: 5px;
+}
+
+.scoreboard.container table {
+    width: 280px;
+}
+
+.scoreboard.container tr {
+    margin: 10px;
+}
+
+.title-container.inline-container {
+    margin-bottom: 10px;
+}
+
+.title.scoreboard {
+    text-align: center;
+    font-weight: bold;
+}
+
+.scoreboard.container hr {
+    width: 200px;
 }
