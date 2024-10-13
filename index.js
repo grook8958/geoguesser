@@ -271,11 +271,11 @@ saveScoreBtn.addEventListener('click', async (e) => {
 })
 
 //Restart game
-endPopup.querySelector('.btn.restart').addEventListener('click', (e) => {
+document.querySelectorAll('.btn.restart').forEach(el =>el.addEventListener('click', (e) => {
     clear();
     init(modeSelector.data.selected);
     closeEndPopup();
-})
+}));
 
 
 function showEndPopup(score, time) {
