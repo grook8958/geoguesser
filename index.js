@@ -233,6 +233,33 @@ async function refreshScoreboard() {
  * =============================================
  */
 
+let gameStarted = 0 //0 = not started; 1 = started; -1 = game over
+let score = 0;
+let progress = 0;
+let timer = null;
+let failedAttempts = 0;
+
+/**
+ * @typedef {Object} City
+ * @property {string} name
+ * @property {[number, number]} coordinates
+ */
+
+/**
+ * @type {Array<City>}
+ */
+let remainingCities = [...cities];
+let instructionCity = randomCity(remainingCities).name
+
+const modeSelector = new HTMLSelectMenu('mode-selector', ['Pin', 'Type', 'Type (Hard)'], onModeSelect);
+
+function onModeSelect(item) {
+    clear()
+    init(modeSelector.data.selected)
+}
+
+init(modeSelector.data.selected);
+
 
 //Close end popup
 const endPopup = document.querySelector('.end-popup');
@@ -290,32 +317,6 @@ function closeEndPopup() {
 
 /**
  * PAGE INITIALISATION
- */
-let gameStarted = 0 //0 = not started; 1 = started; -1 = game over
-let score = 0;
-let progress = 0;
-let timer = null;
-let failedAttempts = 0;
-
-
-const modeSelector = new HTMLSelectMenu('mode-selector', ['Pin', 'Type', 'Type (Hard)'], onModeSelect);
-
-function onModeSelect(item) {
-    clear()
-    init(modeSelector.data.selected)
-}
-
-/**
- * @type {Array<City>}
- */
-let remainingCities = [...cities];
-let instructionCity = randomCity(remainingCities).name
-init(modeSelector.data.selected)
-
-/**
- * @typedef {Object} City
- * @property {string} name
- * @property {[number, number]} coordinates
  */
 
 /**
