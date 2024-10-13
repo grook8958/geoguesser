@@ -249,7 +249,7 @@ let failedAttempts = 0;
  * @type {Array<City>}
  */
 let remainingCities = [...cities];
-let instructionCity = randomCity(remainingCities).name
+let instructionCity;
 
 const modeSelector = new HTMLSelectMenu('mode-selector', ['Pin', 'Type', 'Type (Hard)'], onModeSelect);
 
@@ -361,8 +361,10 @@ function placePins() {
 async function init(gamemode) {
     failedAttempts = 0;
     remainingCities = [...cities];
+    instructionCity = randomCity(remainingCities).name;
     gameStarted = 0;
     score = 0;
+    progress = 0;
     const instructions = document.getElementById('map-instructions-instruction');
     const scoreElement = document.getElementById('map-instructions-score');
     const number = document.getElementById('map-instructions-progress');
