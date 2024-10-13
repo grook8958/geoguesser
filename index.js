@@ -233,12 +233,6 @@ async function refreshScoreboard() {
  * =============================================
  */
 
-const modeSelector = new HTMLSelectMenu('mode-selector', ['Pin', 'Type', 'Type (Hard)'], onModeSelect);
-
-function onModeSelect(item) {
-    clear()
-    init(modeSelector.data.selected)
-}
 
 //Close end popup
 const endPopup = document.querySelector('.end-popup');
@@ -301,6 +295,15 @@ let gameStarted = 0 //0 = not started; 1 = started; -1 = game over
 let score = 0;
 let progress = 0;
 let timer = null;
+let failedAttempts = 0;
+
+
+const modeSelector = new HTMLSelectMenu('mode-selector', ['Pin', 'Type', 'Type (Hard)'], onModeSelect);
+
+function onModeSelect(item) {
+    clear()
+    init(modeSelector.data.selected)
+}
 
 /**
  * @type {Array<City>}
@@ -355,9 +358,12 @@ function placePins() {
 }
 
 async function init(gamemode) {
+    failedAttempts = 0;
+    remainingCities = [...cities];
     gameStarted = 0;
+    score = 0;
     const instructions = document.getElementById('map-instructions-instruction');
-    const score = document.getElementById('map-instructions-score');
+    const scoreElement = document.getElementById('map-instructions-score');
     const number = document.getElementById('map-instructions-progress');
     const time = document.getElementById('map-instructions-time');
     clearInterval(timer);
@@ -379,7 +385,7 @@ async function init(gamemode) {
     }
     number.innerText = `0/${cities.length}`;
     time.innerHTML = '0:00';
-    score.innerHTML = '0%';
+    scoreElement.innerHTML = '0%';
     await refreshScoreboard();
 }
 
@@ -523,7 +529,6 @@ function wrongAnswer(pin) {
 
 
 let lastClickedPin = null;
-let failedAttempts = 0;
 
 /**
  * 
