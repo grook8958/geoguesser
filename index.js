@@ -354,7 +354,6 @@ function placePins() {
     }
 }
 
-function init(gamemode) {
 async function init(gamemode) {
     gameStarted = 0;
     const instructions = document.getElementById('map-instructions-instruction');
