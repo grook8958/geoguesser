@@ -183,7 +183,7 @@ async function refreshScoreboard() {
 
         //Create score cell
         const scoreCell = document.createElement('td');
-        scoreCell.textContent = doc.score.toString(10);
+        scoreCell.textContent = doc.score.toString(10)+'%';
 
         //Append the cells to the row
         row.appendChild(nameCell)
@@ -214,7 +214,7 @@ async function refreshScoreboard() {
 
         //Create score cell
         const scoreCell = document.createElement('td');
-        scoreCell.textContent = doc.score.toString(10);
+        scoreCell.textContent = doc.score.toString(10)+'%';
 
         //Append the cells to the row
         row.appendChild(nameCell)
