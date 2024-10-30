@@ -2,7 +2,7 @@ import HTMLSelectMenu from "./static/scripts/HTMLSelectMenu.js";
 import * as Util from "./static/scripts/utils.js";
 import cities from "./static/cities.json" with {type: 'json'};
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore.js";
 
 /**
  * ===========================================
@@ -129,6 +129,9 @@ function sortDocs(docs) {
     });
 }
 
+/**
+ * Refresh and update the scoreboard
+ */
 async function refreshScoreboard() {
     const rawDocs = await getAllScoreboardData();
 
@@ -235,7 +238,7 @@ async function refreshScoreboard() {
 
 let gameStarted = 0 //0 = not started; 1 = started; -1 = game over
 let score = 0;
-let progress = 0;
+let progress = 0; // Number of cities done
 let timer = null;
 let failedAttempts = 0;
 
@@ -251,13 +254,19 @@ let failedAttempts = 0;
 let remainingCities = [...cities];
 let instructionCity;
 
+//Initialize de mode selector
 const modeSelector = new HTMLSelectMenu('mode-selector', ['Pin', 'Type', 'Type (Hard)'], onModeSelect);
 
+/**
+ * Function called whenever an new item is selected on the select menu
+ * @param {string} item The item selected
+ */
 function onModeSelect(item) {
     clear()
     init(modeSelector.data.selected)
 }
 
+//Initialize
 init(modeSelector.data.selected);
 
 
@@ -298,7 +307,11 @@ document.querySelectorAll('.btn.restart').forEach(el =>el.addEventListener('clic
     closeEndPopup();
 }));
 
-
+/**
+ * Show the end popup
+ * @param {string} score 
+ * @param {string} time 
+ */
 function showEndPopup(score, time) {
     if (!score) score = '100%'
     else if (!time) time = '1:00'
@@ -311,6 +324,7 @@ function showEndPopup(score, time) {
     timeEl.innerHTML = `Time: <strong>${time}</strong>`;
 }
 
+// Close the end popup
 function closeEndPopup() {
     endPopup.classList.remove('show');
 }
@@ -331,6 +345,9 @@ function randomCity(cities) {
     return city;
 }
 
+/**
+ * Remove all the pins
+ */
 function clear() {
     const parent = document.getElementById('map-container');
     const pins = parent.querySelectorAll(".pin");
@@ -341,6 +358,9 @@ function clear() {
     }
 }
 
+/**
+ * Place all the pins 
+ */
 function placePins() {
     const parent = document.getElementById('map-container');
     const template = document.getElementById('pin-template');
@@ -358,6 +378,10 @@ function placePins() {
     }
 }
 
+/**
+ * Initialize the game
+ * @param {string} gamemode 
+ */
 async function init(gamemode) {
     failedAttempts = 0;
     remainingCities = [...cities];
@@ -459,10 +483,10 @@ function peak(pin) {
     pin.classList.add('peak');
 }
 
-function clearInput(pin) {
-    pin.children[2].value = '';
-}
-
+/**
+ * Starts updating the timer
+ * @returns {number} The ID of the interval bound to the timer
+ */
 function startTimer() {
     const time = document.getElementById("map-instructions-time")
     let seconds = 0
@@ -498,6 +522,8 @@ function hintAnswer(pin, failedAttempts) {
     const answerArray = answer.split('');
     let hintArray = [...answerArray]
     hintArray.forEach((e, i) => hintArray[i] = '*');
+
+    //Progressilvely uncover some letters
     switch (failedAttempts) {
         case 1:
             break;
@@ -518,6 +544,7 @@ function hintAnswer(pin, failedAttempts) {
             hintArray = answerArray;
             break;
     }
+    //Show the hint
     hintElement.innerHTML = `Hint: ${hintArray.join('')}`;
 }
 
@@ -529,7 +556,10 @@ function wrongAnswer(pin) {
     pin.classList.add('wrong-answer');
 }
 
-
+/**
+ * The last clicked pin
+ * @type {Element}
+ */
 let lastClickedPin = null;
 
 /**
@@ -611,12 +641,17 @@ async function pinOnClick(event) {
  * @param {Event} event 
  */
 async function pinOnEnter(event) {
-    //Check gamemode
+    //Check gamemode & game started
     if (modeSelector.data.selected !== 'Type' && modeSelector.data.selected !== 'Type (Hard)') return;
     if (gameStarted == -1) return;
-    event.target.parentElement.parentElement.classList.remove('wrong-answer')
+
+    event.target.parentElement.parentElement.classList.remove('wrong-answer');
+
+    //Check key & value typed
     if (event.key !== 'Enter') return;
     if (event.target.value.length <= 0) return;
+
+    //If game not started start the game and timer
     if (gameStarted == 0) { timer = startTimer(); }
     gameStarted = 1;
 
@@ -627,6 +662,7 @@ async function pinOnEnter(event) {
     const input = event.target;   
     const userEntry = input.value;
 
+    //Check wether correct answer depending on Type or Type (Hard) gamemodes
     if (modeSelector.data.selected === 'Type') {
         if (Util.removeDiacritics(userEntry).toLowerCase() !== Util.removeDiacritics(instructionCity).toLowerCase()) {
             failedAttempts++
@@ -642,6 +678,7 @@ async function pinOnEnter(event) {
             return;
         }
     }
+
     /**
      * Score Calculations:
      * - Each city worth 30pts
@@ -676,6 +713,7 @@ async function pinOnEnter(event) {
             score += 5;
             break;
         default:
+            //5 or more
             failedPin(input.parentElement.parentElement);
             break;
     }
@@ -688,12 +726,20 @@ async function pinOnEnter(event) {
     updateScore();
 } 
 
+/**
+ * Update the progress
+ */
 function updateProgress() {
     const number = document.getElementById('map-instructions-progress');
     number.innerHTML = `${progress}/${cities.length}`;
 }
 
+/**
+ * Update the Pin instructions and checks for game end
+ * @returns {void} 
+ */
 function updatePinInstruction() {
+    //If no more cities
     if (remainingCities.length == 0) {
         gameOver();
         return;
@@ -703,7 +749,12 @@ function updatePinInstruction() {
     instructions.innerHTML = `Click on <strong>${instructionCity}</strong>`;
 }
 
+/**
+ * Update the Type instructions and checks for game end
+ * @returns {void} 
+ */
 function updateTypeInstruction() {
+    //If no more cities
     if (remainingCities.length == 0) {
         gameOver();
         return;
@@ -713,17 +764,25 @@ function updateTypeInstruction() {
     showInput(cityPin);
 }
 
+/**
+ * Update the score
+ */
 function updateScore() {
-    const scorePerc = (score / (progress * 30) ) * 100;
+    const scorePerc = (score / (progress * 30) ) * 100; //Score depending on cities done
     const scoreElement = document.getElementById('map-instructions-score');
     scoreElement.innerHTML = `${Math.round(scorePerc)}%`;
 }
 
+/**
+ * Handle the end of the game
+ */
 function gameOver() {
-    clearInterval(timer);
+    clearInterval(timer); //Stops the timer
     const instructions = document.getElementById('map-instructions-instruction');
     instructions.innerHTML = `Gamer Over`;
     gameStarted = -1;
+
+    //Show the end popup
     showEndPopup(document.getElementById('map-instructions-score').innerText, document.getElementById('map-instructions-time').innerText);
 }
 
@@ -738,6 +797,9 @@ function gameOver() {
  */
 
 
+/**
+ * Dev Tools & Functions
+ */
 
 
 /**
@@ -776,5 +838,3 @@ document.getElementById('map-container').addEventListener('click', async functio
     points += `{name: "${name}", coordinates: [${relBottom}, ${relRight}]},`;
     console.log(points)
 })
-
-
