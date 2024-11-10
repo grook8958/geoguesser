@@ -123,75 +123,14 @@ function onGameSelect(item) {
     init(modeSelector.data.selected, gameSelector.data.selected);
 }
 
-//Initialize
-init(modeSelector.data.selected, gameSelector.data.selected);
-
-
-//Close end popup
-const endPopup = document.querySelector('.end-popup');
-const endPopupInput = endPopup.querySelector('input');
-const saveScoreBtn = endPopup.querySelector('.btn.save-score');
-document.querySelector('.end-popup .btn.close').addEventListener('click', closeEndPopup);
-
-//Save score
-saveScoreBtn.addEventListener('click', async (e) => {
-    if (endPopupInput.value <= 0) {
-        saveScoreBtn.classList.add('no-name-error');
-        await Util.wait(3000);
-        saveScoreBtn.classList.remove('no-name-error');
-        return;
-    }
-    const score = endPopup.getAttribute('data-score');
-    const time = endPopup.getAttribute('data-time');
-    const mode = modeSelector.data.selected;
-    const name = endPopupInput.value;
-    endPopup.classList.add('wait');
-    await db.addScoreboardData(gameSelector.data.selected, {
-        mode: mode,
-        name: name,
-        score: Number.parseInt(score.replace('%', ''), 10),
-        time: time,
-    });
-    endPopup.classList.add('remove');
-    saveScoreBtn.classList.add('saved');
-    await refreshScoreboard();
-})
-
-//Restart game
-document.querySelectorAll('.btn.restart').forEach(el =>el.addEventListener('click', (e) => {
-    clear();
-    init(modeSelector.data.selected, gameSelector.data.selected);
-    closeEndPopup();
-}));
-
-/**
- * Show the end popup
- * @param {string} score 
- * @param {string} time 
- */
-function showEndPopup(score, time) {
-    if (!score) score = '100%'
-    else if (!time) time = '1:00'
-    endPopup.classList.add('show');
-    const scoreEl = endPopup.querySelector('.end-popup .body span.score');
-    const timeEl = endPopup.querySelector('.end-popup .body span.time');
-    endPopup.setAttribute('data-score', score);
-    endPopup.setAttribute('data-time', time);
-    scoreEl.innerHTML = `Score: <strong>${score}</strong>`;
-    timeEl.innerHTML = `Time: <strong>${time}</strong>`;
-}
-
-// Close the end popup
-function closeEndPopup() {
-    endPopup.classList.remove('show');
-}
-
 /**
  * PAGE INITIALISATION
  */
+init(modeSelector.data.selected, gameSelector.data.selected);
 
 /**
- * 
+ * Set the backround image
+ * @param {string} img_path 
  */
 function setImg(img_path) {
     const imgEl = document.querySelector('.map');
@@ -656,13 +595,62 @@ function gameOver() {
     showEndPopup(document.getElementById('map-instructions-score').innerText, document.getElementById('map-instructions-time').innerText);
 }
 
+//Close end popup
+const endPopup = document.querySelector('.end-popup');
+const endPopupInput = endPopup.querySelector('input');
+const saveScoreBtn = endPopup.querySelector('.btn.save-score');
+document.querySelector('.end-popup .btn.close').addEventListener('click', closeEndPopup);
 
+//Save score
+saveScoreBtn.addEventListener('click', async (e) => {
+    if (endPopupInput.value <= 0) {
+        saveScoreBtn.classList.add('no-name-error');
+        await Util.wait(3000);
+        saveScoreBtn.classList.remove('no-name-error');
+        return;
+    }
+    const score = endPopup.getAttribute('data-score');
+    const time = endPopup.getAttribute('data-time');
+    const mode = modeSelector.data.selected;
+    const name = endPopupInput.value;
+    endPopup.classList.add('wait');
+    await db.addScoreboardData(gameSelector.data.selected, {
+        mode: mode,
+        name: name,
+        score: Number.parseInt(score.replace('%', ''), 10),
+        time: time,
+    });
+    endPopup.classList.add('remove');
+    saveScoreBtn.classList.add('saved');
+    await refreshScoreboard();
+})
 
-
+//Restart game
+document.querySelectorAll('.btn.restart').forEach(el =>el.addEventListener('click', (e) => {
+    clear();
+    init(modeSelector.data.selected, gameSelector.data.selected);
+    closeEndPopup();
+}));
 
 /**
- * ----------------------------------------------------------------------------------------------------------
- * ==========================================================================================================
- * ----------------------------------------------------------------------------------------------------------
+ * Show the end popup
+ * @param {string} score 
+ * @param {string} time 
  */
+function showEndPopup(score, time) {
+    if (!score) score = '100%'
+    else if (!time) time = '1:00'
+    endPopup.classList.add('show');
+    const scoreEl = endPopup.querySelector('.end-popup .body span.score');
+    const timeEl = endPopup.querySelector('.end-popup .body span.time');
+    endPopup.setAttribute('data-score', score);
+    endPopup.setAttribute('data-time', time);
+    scoreEl.innerHTML = `Score: <strong>${score}</strong>`;
+    timeEl.innerHTML = `Time: <strong>${time}</strong>`;
+}
+
+// Close the end popup
+function closeEndPopup() {
+    endPopup.classList.remove('show');
+}
 
