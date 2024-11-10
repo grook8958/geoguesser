@@ -16,14 +16,23 @@
         <div>
             <h1>Geoguesser</h1>
             <hr class="small">
-            <h2>Villes Françaises</h2>
+            <h2 id="banner-subtitle">Villes Françaises</h2>
         </div>
         <hr>
-        <div class="mode-selector-container">
+        <div class="selector-container mode">
             <span>Mode Selector: </span>
             <div id="mode-selector" class="select-menu" style="width:100px;" value="">
                 <button class="select-menu-button" type="button">
                     <span class="selected">Pin</span>
+                    <svg class="select-menu-arrow" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" width="1.2em" height="1.2em"><path class="select-menu-arrow-path" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 15l7-7l7 7"></path></svg>
+                </button>
+            </div>
+        </div>
+        <div class="selector-container game">
+            <span>Game Selector: </span>
+            <div id="game-selector" class="select-menu" style="width:150px;" value="">
+                <button class="select-menu-button" type="button">
+                    <span class="selected">Villes Françaises</span>
                     <svg class="select-menu-arrow" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" width="1.2em" height="1.2em"><path class="select-menu-arrow-path" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 15l7-7l7 7"></path></svg>
                 </button>
             </div>
@@ -46,7 +55,7 @@
         <br>
         <div class="inline-container">
             <div id="map-container" class="mapbox">
-                <img class="map" src="./static/map-carte.png">
+                <img class="map" src="./static/images/map-carte.png">
                 <button id="pin-template" class="pin neutral" name="example">
                     <span class="circle"></span>
                     <span class="pin-name"></span>

@@ -1,3 +1,4 @@
+import ScoreboardDocument from "./database/ScoreboardDocument.js";
 
 /**
  * Generates a pseudorandom number between `min` and `max`
@@ -121,4 +122,34 @@ export function removeDiacritics (str) {
     }
   
     return str;  
+}
+
+/**
+ * Populate a table with scoreboard documents
+ * @param {Element} table 
+ * @param {ScoreboardDocument} doc 
+ */
+export function populateTable(table, doc) {
+    //Create new row
+    const row = document.createElement('tr');
+
+    //Create name cell
+    const nameCell = document.createElement('td');
+    nameCell.textContent = doc.name;
+
+    //Create time cell
+    const timeCell = document.createElement('td');
+    timeCell.textContent = doc.time;
+
+    //Create score cell
+    const scoreCell = document.createElement('td');
+    scoreCell.textContent = doc.score.toString(10)+'%';
+
+    //Append the cells to the row
+    row.appendChild(nameCell)
+    row.appendChild(scoreCell);
+    row.appendChild(timeCell);
+
+    //Add the row to the table body
+    table.appendChild(row);
 }

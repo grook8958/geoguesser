@@ -1,8 +1,8 @@
 import HTMLSelectMenu from "./static/scripts/HTMLSelectMenu.js";
 import * as Util from "./static/scripts/utils.js";
-import cities from "./static/cities.json" with {type: 'json'};
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore.js";
+import cities from "./static/gamedata/french-cities.json" with {type: 'json'}; //Default
+import games from "./static/games.json" with {type: 'json'};
+import Database from './static/scripts/database/database.js';
 
 /**
  * ===========================================
@@ -18,11 +18,12 @@ const firebaseConfig = {
     appId: "1:220652800613:web:be145751adf04b94dfd48c",
     measurementId: "G-2FY5ND2KJZ"
 };
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
 
-// Initialize Firebase Storage and Firestore
-const db = getFirestore(app);
+//Initialize Database
+const db = new Database({
+    debug: true,
+    firebaseConfig: firebaseConfig
+});
 
 /**
  * @typedef {Object} DBScoreDoc
@@ -33,199 +34,39 @@ const db = getFirestore(app);
  */
 
 /**
- * Add a score document to the DB
- * @param {DBScoreDoc} param0
- */
-async function addScoreboardData({name, mode, score, time}) {
-    try {
-        // Reference to the collection where you want to add data
-        const docRef = await addDoc(collection(db, "scoreboard"), {
-            name,
-            mode,
-            score,
-            time
-        });
-        console.log("Document written with ID: ", docRef.id);
-    } catch (e) {
-        console.error("Error adding document: ", e);
-    }
-}
-
-/**
- * Gets all the scoreboard data
- * @returns {Array<DBScoreDoc>}
- */
-async function getAllScoreboardData() {
-    try {
-        // Reference to the "users" collection
-        const querySnapshot = await getDocs(collection(db, "scoreboard"));
-  
-        // Loop through all documents and log their data
-        const docs = [];
-        querySnapshot.forEach((doc) => {
-            console.log(`${doc.id} =>`, doc.data());
-            return docs.push(doc.data());
-        });
-        return docs;
-    } catch (e) {
-        console.error("Error reading documents: ", e);
-    }
-} 
-
-/**
- * Get all the documents corresponding to "mode"
- * @param {Array<DBScoreDoc>} docs 
- * @param {string} mode
- * @return {Array<DBScoreDoc>}
- */
-function getDocMode(docs, mode) {
-    return docs.filter(doc => {
-        if (doc.mode === mode) {
-            return doc;
-        }
-    });
-}
-
-/**
- * Get all the docs of 'Pin' mode
- * @param {Array<DBScoreDoc>} docs 
- * @returns {Array<DBScoreDoc>}
- */
-function getDocPin(docs) {
-    return getDocMode(docs, 'Pin');
-}
-
-/**
- * Get all the docs of 'Type' mode
- * @param {Array<DBScoreDoc>} docs 
- * @returns {Array<DBScoreDoc>}
- */
-function getDocType(docs) {
-    return getDocMode(docs, 'Type');
-}
-
-/**
- * Get all the docs of 'Type (Hard)' mode
- * @param {Array<DBScoreDoc>} docs 
- * @returns {Array<DBScoreDoc>}
- */
-function getDocTypeHard(docs) {
-    return getDocMode(docs, 'Type (Hard)');
-}
-
-/**
- * Sort the docs by highest score and lowest time
- * @param {Array<DBScoreDoc>} docs 
- * @returns {Array<DBScoreDoc>}
- */
-function sortDocs(docs) {
-    return docs.sort((a, b) => {
-        const aTime = Number(a.time.split(':')[1]) + (Number(a.time.split(':')[0])*60);
-        const bTime = Number(b.time.split(':')[1]) + (Number(b.time.split(':')[0])*60);
-        if (a.score !== b.score) {
-            return b.score - a.score;
-        }
-        return aTime - bTime;
-    });
-}
-
-/**
  * Refresh and update the scoreboard
  */
 async function refreshScoreboard() {
-    const rawDocs = await getAllScoreboardData();
+    const rawDocs = await db.getAllScoreboardData(gameSelector.data.selected);
 
     //Pin
     const pinTableBody = document.querySelector('#pin tbody');
     pinTableBody.innerHTML = '';
     
-    const pinDocs = sortDocs(getDocPin(rawDocs));
+    const pinDocs = Database.sortDocs(Database.getDocPin(rawDocs));
 
     pinDocs.forEach(doc => {
-        //Create new row
-        const row = document.createElement('tr');
-
-        //Create name cell
-        const nameCell = document.createElement('td');
-        nameCell.textContent = doc.name;
-
-        //Create time cell
-        const timeCell = document.createElement('td');
-        timeCell.textContent = doc.time;
-
-        //Create score cell
-        const scoreCell = document.createElement('td');
-        scoreCell.textContent = doc.score.toString(10) + '%';
-
-        //Append the cells to the row
-        row.appendChild(nameCell)
-        row.appendChild(scoreCell);
-        row.appendChild(timeCell);
-
-        //Add the row to the table body
-        pinTableBody.appendChild(row);
+        Util.populateTable(pinTableBody, doc);
     });
 
     //Type
     const typeTableBody = document.querySelector('#type tbody');
     typeTableBody.innerHTML = '';
     
-    const typeDocs = sortDocs(getDocType(rawDocs));
+    const typeDocs = Database.sortDocs(Database.getDocType(rawDocs));
 
     typeDocs.forEach(doc => {
-        //Create new row
-        const row = document.createElement('tr');
-
-        //Create name cell
-        const nameCell = document.createElement('td');
-        nameCell.textContent = doc.name;
-
-        //Create time cell
-        const timeCell = document.createElement('td');
-        timeCell.textContent = doc.time;
-
-        //Create score cell
-        const scoreCell = document.createElement('td');
-        scoreCell.textContent = doc.score.toString(10)+'%';
-
-        //Append the cells to the row
-        row.appendChild(nameCell)
-        row.appendChild(scoreCell);
-        row.appendChild(timeCell);
-
-        //Add the row to the table body
-        typeTableBody.appendChild(row);
+        Util.populateTable(typeTableBody, doc);
     });
 
-    //Type
+    //Type Hard
     const typeHardTableBody = document.querySelector('#type-hard tbody');
     typeHardTableBody.innerHTML = '';
     
-    const typeHardDocs = sortDocs(getDocTypeHard(rawDocs));
+    const typeHardDocs = Database.sortDocs(Database.getDocTypeHard(rawDocs));
 
     typeHardDocs.forEach(doc => {
-        //Create new row
-        const row = document.createElement('tr');
-
-        //Create name cell
-        const nameCell = document.createElement('td');
-        nameCell.textContent = doc.name;
-
-        //Create time cell
-        const timeCell = document.createElement('td');
-        timeCell.textContent = doc.time;
-
-        //Create score cell
-        const scoreCell = document.createElement('td');
-        scoreCell.textContent = doc.score.toString(10)+'%';
-
-        //Append the cells to the row
-        row.appendChild(nameCell)
-        row.appendChild(scoreCell);
-        row.appendChild(timeCell);
-
-        //Add the row to the table body
-        typeHardTableBody.appendChild(row);
+        Util.populateTable(typeHardTableBody, doc);
     });
 
 }
@@ -235,27 +76,33 @@ async function refreshScoreboard() {
  *            GAME INITIALISATION
  * =============================================
  */
-
 let gameStarted = 0 //0 = not started; 1 = started; -1 = game over
 let score = 0;
-let progress = 0; // Number of cities done
+let progress = 0; // Number of location done
 let timer = null;
 let failedAttempts = 0;
 
+
+//Initialize de mode selector
+const modeSelector = new HTMLSelectMenu('mode-selector', ['Pin', 'Type', 'Type (Hard)'], onModeSelect);
+const gameSelector = new HTMLSelectMenu('game-selector', Object.keys(games), onGameSelect);
+
 /**
- * @typedef {Object} City
+ * @typedef {Object} Pin
  * @property {string} name
  * @property {[number, number]} coordinates
  */
 
 /**
- * @type {Array<City>}
+ * @type {Array<Pin>}
  */
-let remainingCities = [...cities];
-let instructionCity;
+let pins = cities; //default on page load
 
-//Initialize de mode selector
-const modeSelector = new HTMLSelectMenu('mode-selector', ['Pin', 'Type', 'Type (Hard)'], onModeSelect);
+/**
+ * @type {Array<Pin>}
+ */
+let remainingPins = [...pins];
+let instructionPin;
 
 /**
  * Function called whenever an new item is selected on the select menu
@@ -263,11 +110,21 @@ const modeSelector = new HTMLSelectMenu('mode-selector', ['Pin', 'Type', 'Type (
  */
 function onModeSelect(item) {
     clear()
-    init(modeSelector.data.selected)
+    init(modeSelector.data.selected, gameSelector.data.selected)
+}
+
+/**
+ * Function called whenever an new item is selected on the select menu
+ * @param {string} item The item selected
+ */
+function onGameSelect(item) {
+    clear()
+    document.getElementById('banner-subtitle').innerText = item.innerText;
+    init(modeSelector.data.selected, gameSelector.data.selected);
 }
 
 //Initialize
-init(modeSelector.data.selected);
+init(modeSelector.data.selected, gameSelector.data.selected);
 
 
 //Close end popup
@@ -289,7 +146,7 @@ saveScoreBtn.addEventListener('click', async (e) => {
     const mode = modeSelector.data.selected;
     const name = endPopupInput.value;
     endPopup.classList.add('wait');
-    await addScoreboardData({
+    await db.addScoreboardData(gameSelector.data.selected, {
         mode: mode,
         name: name,
         score: Number.parseInt(score.replace('%', ''), 10),
@@ -303,7 +160,7 @@ saveScoreBtn.addEventListener('click', async (e) => {
 //Restart game
 document.querySelectorAll('.btn.restart').forEach(el =>el.addEventListener('click', (e) => {
     clear();
-    init(modeSelector.data.selected);
+    init(modeSelector.data.selected, gameSelector.data.selected);
     closeEndPopup();
 }));
 
@@ -334,15 +191,23 @@ function closeEndPopup() {
  */
 
 /**
- * Returns a random city and removes it from the list
- * @param {Array<City>} cities 
+ * 
+ */
+function setImg(img_path) {
+    const imgEl = document.querySelector('.map');
+    imgEl.src = img_path;
+}
+
+/**
+ * Returns a random pin and removes it from the list
+ * @param {Array<Pin>} pins 
  * @returns 
  */
-function randomCity(cities) {
-    const i = Util.getRandomNumber(0, cities.length-1);
-    const city = cities[i];
-    cities.splice(i,1);
-    return city;
+function randomPin(pins) {
+    const i = Util.getRandomNumber(0, pins.length-1);
+    const pin = pins[i];
+    pins.splice(i,1);
+    return pin;
 }
 
 /**
@@ -361,20 +226,20 @@ function clear() {
 /**
  * Place all the pins 
  */
-function placePins() {
+function placePins(pins) {
     const parent = document.getElementById('map-container');
     const template = document.getElementById('pin-template');
-    for (const city of cities) {
+    for (const pin of pins) {
         const clone = template.cloneNode(true);
         clone.removeAttribute("id")
-        clone.setAttribute('name', city.name)
+        clone.setAttribute('name', pin.name)
         parent.appendChild(clone);
-        const pin = parent.querySelector(`[name="${city.name}"]`);
-        pin.style.bottom = `${city.coordinates[0]}px`
-        pin.style.right = `${city.coordinates[1]}px`
-        pin.children[1].innerHTML = city.name;
-        pin.addEventListener('click', pinOnClick)
-        pin.children[2].addEventListener('keypress', pinOnEnter);
+        const pinEl = parent.querySelector(`[name="${pin.name}"]`);
+        pinEl.style.bottom = `${pin.coordinates[0]}px`
+        pinEl.style.right = `${pin.coordinates[1]}px`
+        pinEl.children[1].innerHTML = pin.name;
+        pinEl.addEventListener('click', pinOnClick)
+        pinEl.children[2].addEventListener('keypress', pinOnEnter);
     }
 }
 
@@ -382,38 +247,43 @@ function placePins() {
  * Initialize the game
  * @param {string} gamemode 
  */
-async function init(gamemode) {
-    failedAttempts = 0;
-    remainingCities = [...cities];
-    instructionCity = randomCity(remainingCities).name;
-    gameStarted = 0;
-    score = 0;
-    progress = 0;
-    const instructions = document.getElementById('map-instructions-instruction');
-    const scoreElement = document.getElementById('map-instructions-score');
-    const number = document.getElementById('map-instructions-progress');
-    const time = document.getElementById('map-instructions-time');
-    clearInterval(timer);
-    placePins();
-    switch(gamemode) {
-        case('Pin'):
-            instructions.innerHTML = `Click on <strong>${instructionCity}</strong>`;
-            break;
-        case('Type'):
-            instructions.innerText = 'Type the name of the city in the box';
-            const cityPin = document.querySelector(`[name="${instructionCity}"]`)
-            showInput(cityPin);
-            break;
-        case('Type (Hard)'):
-            instructions.innerText = 'Type the name of the city in the box';
-            const cityPin2 = document.querySelector(`[name="${instructionCity}"]`)
-            showInput(cityPin2);
-            break;
-    }
-    number.innerText = `0/${cities.length}`;
-    time.innerHTML = '0:00';
-    scoreElement.innerHTML = '0%';
-    await refreshScoreboard();
+async function init(gamemode, game) {
+    import(games[game].data_path, {with: {type: 'json'}}).then(async (res) => {
+        setImg(games[game].map_img_path);
+        pins = res.default
+        failedAttempts = 0;
+        remainingPins = [...pins];
+        instructionPin = randomPin(remainingPins).name;
+        gameStarted = 0;
+        score = 0;
+        progress = 0;
+        const instructions = document.getElementById('map-instructions-instruction');
+        const scoreElement = document.getElementById('map-instructions-score');
+        const number = document.getElementById('map-instructions-progress');
+        const time = document.getElementById('map-instructions-time');
+        clearInterval(timer);
+        placePins(pins);
+        switch(gamemode) {
+            case('Pin'):
+                instructions.innerHTML = `Click on <strong>${instructionPin}</strong>`;
+                break;
+            case('Type'):
+                instructions.innerText = `Type the name of the ${games[game].instruction_name} in the box`;
+                const pin = document.querySelector(`[name="${instructionPin}"]`)
+                showInput(pin);
+                break;
+            case('Type (Hard)'):
+                instructions.innerText = `Type the name of the ${games[game].instruction_name} in the box`;
+                const pin2 = document.querySelector(`[name="${instructionPin}"]`)
+                showInput(pin2);
+                break;
+        }
+        number.innerText = `0/${pins.length}`;
+        time.innerHTML = '0:00';
+        scoreElement.innerHTML = '0%';
+        await refreshScoreboard();
+        updateProgress();
+    });
 }
 
 
@@ -576,7 +446,7 @@ async function pinOnClick(event) {
     gameStarted = 1
 
     // Get the corrent pin
-    const answerPin = document.querySelector(`[name="${instructionCity}"]`);
+    const answerPin = document.querySelector(`[name="${instructionPin}"]`);
 
     /**
      * The pin that was clicked
@@ -590,7 +460,7 @@ async function pinOnClick(event) {
     lastClickedPin = pin;
 
     // Clicked wrong pin
-    if (pinName != instructionCity) {
+    if (pinName != instructionPin) {
         failedAttempts++;
         peak(pin);
         if (failedAttempts >= 3) {
@@ -603,7 +473,7 @@ async function pinOnClick(event) {
 
     /**
      * Score Calculations:
-     * - Each city worth 30pts
+     * - Each pin worth 30pts
      * - Correct = 30pts
      * - 1 failed attempt = 20pts
      * - 2 failed attempts = 10pts
@@ -632,8 +502,8 @@ async function pinOnClick(event) {
     progress++;
     failedAttempts = 0;
     updateProgress();
-    updatePinInstruction();
     updateScore();
+    updatePinInstruction();
 }
 
 /**
@@ -664,14 +534,14 @@ async function pinOnEnter(event) {
 
     //Check wether correct answer depending on Type or Type (Hard) gamemodes
     if (modeSelector.data.selected === 'Type') {
-        if (Util.removeDiacritics(userEntry).toLowerCase() !== Util.removeDiacritics(instructionCity).toLowerCase()) {
+        if (Util.removeDiacritics(userEntry).toLowerCase() !== Util.removeDiacritics(instructionPin).toLowerCase()) {
             failedAttempts++
             wrongAnswer(input.parentElement.parentElement)
             hintAnswer(input.parentElement.parentElement, failedAttempts);
             return;
         }
     } else if (modeSelector.data.selected === 'Type (Hard)') {
-        if (userEntry !== instructionCity) {
+        if (userEntry !== instructionPin) {
             failedAttempts++
             wrongAnswer(input.parentElement.parentElement);
             hintAnswer(input.parentElement.parentElement, failedAttempts);
@@ -681,7 +551,7 @@ async function pinOnEnter(event) {
 
     /**
      * Score Calculations:
-     * - Each city worth 30pts
+     * - Each pin worth 30pts
      * - Correct = 30pts
      * - 1 failed attempt = 25pts
      * - 2 failed attempts = 20pts
@@ -722,8 +592,8 @@ async function pinOnEnter(event) {
     failedAttempts = 0;
     hideInput(input.parentElement.parentElement);
     updateProgress();
-    updateTypeInstruction();
     updateScore();
+    updateTypeInstruction();
 } 
 
 /**
@@ -731,7 +601,7 @@ async function pinOnEnter(event) {
  */
 function updateProgress() {
     const number = document.getElementById('map-instructions-progress');
-    number.innerHTML = `${progress}/${cities.length}`;
+    number.innerHTML = `${progress}/${pins.length}`;
 }
 
 /**
@@ -739,14 +609,14 @@ function updateProgress() {
  * @returns {void} 
  */
 function updatePinInstruction() {
-    //If no more cities
-    if (remainingCities.length == 0) {
+    //If no more pins
+    if (remainingPins.length == 0) {
         gameOver();
         return;
     }
-    instructionCity = randomCity(remainingCities).name
+    instructionPin = randomPin(remainingPins).name
     const instructions = document.getElementById('map-instructions-instruction');
-    instructions.innerHTML = `Click on <strong>${instructionCity}</strong>`;
+    instructions.innerHTML = `Click on <strong>${instructionPin}</strong>`;
 }
 
 /**
@@ -754,21 +624,21 @@ function updatePinInstruction() {
  * @returns {void} 
  */
 function updateTypeInstruction() {
-    //If no more cities
-    if (remainingCities.length == 0) {
+    //If no more pins
+    if (remainingPins.length == 0) {
         gameOver();
         return;
     }
-    instructionCity = randomCity(remainingCities).name
-    const cityPin = document.querySelector(`[name="${instructionCity}"]`)
-    showInput(cityPin);
+    instructionPin = randomPin(remainingPins).name
+    const pin = document.querySelector(`[name="${instructionPin}"]`)
+    showInput(pin);
 }
 
 /**
  * Update the score
  */
 function updateScore() {
-    const scorePerc = (score / (progress * 30) ) * 100; //Score depending on cities done
+    const scorePerc = (score / (progress * 30) ) * 100; //Score depending on pins done
     const scoreElement = document.getElementById('map-instructions-score');
     scoreElement.innerHTML = `${Math.round(scorePerc)}%`;
 }
@@ -796,45 +666,3 @@ function gameOver() {
  * ----------------------------------------------------------------------------------------------------------
  */
 
-
-/**
- * Dev Tools & Functions
- */
-
-
-/**
- * Point Coordinates Placer
- */
-let points = "[";
-const enabled = false
-document.getElementById('map-container').addEventListener('mousemove', async function (event) {
-    if (!enabled) return;
-    const divRect = this.getBoundingClientRect();
-    const pin = document.getElementById('pin-template');
-    pin.style.visibility = "visible"
-
-    // Calculate the relative left coordinate
-    const relativeRight = divRect.width - (event.clientX - divRect.left) - 10;
-
-    // Calculate the relative bottom coordinate (div height - relativeTop)
-    const relativeBottom = divRect.height - (event.clientY - divRect.top)// - pin.offsetHeight;
-
-    // Log the relative top and bottom coordinates
-    console.log('Relative left: ', relativeRight);
-    console.log('Relative Bottom: ', relativeBottom);
-
-    pin.style.bottom = `${relativeBottom}px`;
-    pin.style.right = `${relativeRight}px`;
-
-})
-
-document.getElementById('map-container').addEventListener('click', async function (event) {
-    if (!enabled) return;
-    const pin = document.getElementById('pin-template');
-    pin.style.visibility = "visible"
-    const name = prompt('Name: ');
-    const relBottom = Number(pin.style.bottom.replace('px', ''))
-    const relRight = Number(pin.style.right.replace('px', ''))
-    points += `{name: "${name}", coordinates: [${relBottom}, ${relRight}]},`;
-    console.log(points)
-})
