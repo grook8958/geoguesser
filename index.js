@@ -28,8 +28,8 @@ const db = new Database({
 /**
  * Refresh and update the scoreboard
  */
-async function refreshScoreboard() {
-    const rawDocs = await db.getAllScoreboardData(gameSelector.data.selected);
+function refreshScoreboard() {
+    const rawDocs = db.getAllScoreboardData(gameSelector.data.selected);
 
     //Pin
     const pinTableBody = document.querySelector('#pin tbody');
@@ -179,42 +179,49 @@ function placePins(pins) {
  * @param {string} gamemode 
  */
 async function init(gamemode, game) {
-    import(games[game].data_path, {with: {type: 'json'}}).then(async (res) => {
-        setImg(games[game].map_img_path);
-        pins = res.default
-        failedAttempts = 0;
-        remainingPins = [...pins];
-        instructionPin = randomPin(remainingPins).name;
-        gameStarted = 0;
-        score = 0;
-        progress = 0;
-        const instructions = document.getElementById('map-instructions-instruction');
-        const scoreElement = document.getElementById('map-instructions-score');
-        const number = document.getElementById('map-instructions-progress');
-        const time = document.getElementById('map-instructions-time');
-        clearInterval(timer);
-        placePins(pins);
-        switch(gamemode) {
-            case('Pin'):
-                instructions.innerHTML = `Click on <strong>${instructionPin}</strong>`;
-                break;
-            case('Type'):
-                instructions.innerText = `Type the name of the ${games[game].instruction_name} in the box`;
-                const pin = document.querySelector(`[name="${instructionPin}"]`)
-                showInput(pin);
-                break;
-            case('Type (Hard)'):
-                instructions.innerText = `Type the name of the ${games[game].instruction_name} in the box`;
-                const pin2 = document.querySelector(`[name="${instructionPin}"]`)
-                showInput(pin2);
-                break;
-        }
-        number.innerText = `0/${pins.length}`;
-        time.innerHTML = '0:00';
-        scoreElement.innerHTML = '0%';
-        await refreshScoreboard();
-        updateProgress();
-    });
+    // Import the game data file
+    const res = await import(games[game].data_path, {with: {type: 'json'}});
+    pins = res.default
+
+    // Set the correct backround image
+    setImg(games[game].map_img_path); 
+
+    // Reset Main game variables
+    failedAttempts = 0;
+    remainingPins = [...pins];
+    instructionPin = randomPin(remainingPins).name;
+    gameStarted = 0;
+    score = 0;
+    progress = 0;
+
+    const instructions = document.getElementById('map-instructions-instruction');
+    const scoreElement = document.getElementById('map-instructions-score');
+    const progress = document.getElementById('map-instructions-progress');
+    const time = document.getElementById('map-instructions-time');
+    clearInterval(timer); // Reset Timer
+    placePins(pins);
+
+    // Display the correct instruction and setup the beginning of the game
+    switch(gamemode) {
+        case('Pin'):
+            instructions.innerHTML = `Click on <strong>${instructionPin}</strong>`;
+            break;
+        case('Type'):
+            instructions.innerText = `Type the name of the ${games[game].instruction_name} in the box`;
+            const pin = document.querySelector(`[name="${instructionPin}"]`)
+            showInput(pin);
+            break;
+        case('Type (Hard)'):
+            instructions.innerText = `Type the name of the ${games[game].instruction_name} in the box`;
+            const pin2 = document.querySelector(`[name="${instructionPin}"]`)
+            showInput(pin2);
+            break;
+    }
+    progress.innerText = `0/${pins.length}`;
+    time.innerHTML = '0:00';
+    scoreElement.innerHTML = '0%';
+    refreshScoreboard();
+    updateProgress();
 }
 
 
@@ -614,7 +621,7 @@ saveScoreBtn.addEventListener('click', async (e) => {
     });
     endPopup.classList.add('remove');
     saveScoreBtn.classList.add('saved');
-    await refreshScoreboard();
+    refreshScoreboard();
 })
 
 //Restart game
