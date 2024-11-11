@@ -107,7 +107,7 @@ function onModeSelect(item) {
 
 /**
  * Function called whenever an new item is selected on the select menu
- * @param {string} item The item selected
+ * @param {Element} item The item selected
  */
 function onGameSelect(item) {
     clear()
@@ -371,7 +371,7 @@ function wrongAnswer(pin) {
 let lastClickedPin = null;
 
 /**
- * 
+ * Event Handler when a pin is clicked
  * @param {Event} event 
  */
 async function pinOnClick(event) {
@@ -445,7 +445,7 @@ async function pinOnClick(event) {
 }
 
 /**
- * 
+ * Event Handler for when a pin input is typed in
  * @param {Event} event 
  */
 async function pinOnEnter(event) {
