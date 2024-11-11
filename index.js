@@ -26,14 +26,6 @@ const db = new Database({
 });
 
 /**
- * @typedef {Object} DBScoreDoc
- * @property {string} name
- * @property {string} mode
- * @property {number} score
- * @property {string} time
- */
-
-/**
  * Refresh and update the scoreboard
  */
 async function refreshScoreboard() {
