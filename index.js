@@ -60,7 +60,6 @@ function refreshScoreboard() {
     typeHardDocs.forEach(doc => {
         Util.populateTable(typeHardTableBody, doc);
     });
-
 }
 
 /**
