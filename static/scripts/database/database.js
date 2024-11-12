@@ -98,6 +98,7 @@ class ScoreboardDatabase {
      * @return {Array<DatabaseScoreboardDocumentObject|ScoreboardDocument>}
      */
     static getDocMode(docs, mode) {
+        console.log(docs)
         return docs.filter(doc => {
             if (doc.mode === mode) {
                 return doc;

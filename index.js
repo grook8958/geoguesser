@@ -28,8 +28,8 @@ const db = new Database({
 /**
  * Refresh and update the scoreboard
  */
-function refreshScoreboard() {
-    const rawDocs = db.getAllScoreboardData(gameSelector.data.selected);
+async function refreshScoreboard() {
+    const rawDocs = await db.getAllScoreboardData(gameSelector.data.selected);
 
     //Pin
     const pinTableBody = document.querySelector('#pin tbody');
