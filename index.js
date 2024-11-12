@@ -193,31 +193,31 @@ async function init(gamemode, game) {
     score = 0;
     progress = 0;
 
-    const instructions = document.getElementById('map-instructions-instruction');
+    const instructionsElement = document.getElementById('map-instructions-instruction');
     const scoreElement = document.getElementById('map-instructions-score');
-    const progress = document.getElementById('map-instructions-progress');
-    const time = document.getElementById('map-instructions-time');
+    const progressElement = document.getElementById('map-instructions-progress');
+    const timeElement = document.getElementById('map-instructions-time');
     clearInterval(timer); // Reset Timer
     placePins(pins);
 
     // Display the correct instruction and setup the beginning of the game
     switch(gamemode) {
         case('Pin'):
-            instructions.innerHTML = `Click on <strong>${instructionPin}</strong>`;
+            instructionsElement.innerHTML = `Click on <strong>${instructionPin}</strong>`;
             break;
         case('Type'):
-            instructions.innerText = `Type the name of the ${games[game].instruction_name} in the box`;
+            instructionsElement.innerText = `Type the name of the ${games[game].instruction_name} in the box`;
             const pin = document.querySelector(`[name="${instructionPin}"]`)
             showInput(pin);
             break;
         case('Type (Hard)'):
-            instructions.innerText = `Type the name of the ${games[game].instruction_name} in the box`;
+            instructionsElement.innerText = `Type the name of the ${games[game].instruction_name} in the box`;
             const pin2 = document.querySelector(`[name="${instructionPin}"]`)
             showInput(pin2);
             break;
     }
-    progress.innerText = `0/${pins.length}`;
-    time.innerHTML = '0:00';
+    progressElement.innerText = `0/${pins.length}`;
+    timeElement.innerHTML = '0:00';
     scoreElement.innerHTML = '0%';
     refreshScoreboard();
     updateProgress();
