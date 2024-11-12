@@ -68,10 +68,10 @@ main hr {
     width: 100%;
 }
 
-.mode-selector-container {
+.selector-container {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     display: flex;
-    margin-top: 10px
+    margin-top: 10px;
 }
 
 .select-menu {
@@ -83,11 +83,11 @@ main hr {
     color: white;
     font-weight: bold;
     text-align: left;
-    width: 110px;
     background-color: #4287f5;
     border-radius: .25em;
     border-color: transparent;
     cursor: pointer;
+    width: 100%;
 }
 
 .select-menu-arrow {
@@ -99,7 +99,7 @@ main hr {
     background-color: rgba(0,0,0,0.1);
     text-align: center;
     font-size: .75em;
-    width: 110px;
+    width: 100%;
 }
 
 .select-menu-items-container span {

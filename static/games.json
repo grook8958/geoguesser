@@ -1,0 +1,7 @@
+{
+    "Villes Françaises": {
+        "map_img_path": "./static/images/map-carte.png",
+        "data_path": "./static/gamedata/french-cities.json",
+        "instruction_name": "city"
+    }
+}
