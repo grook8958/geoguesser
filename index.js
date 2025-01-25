@@ -2,7 +2,7 @@ import HTMLSelectMenu from "./static/scripts/HTMLSelectMenu.js";
 import * as Util from "./static/scripts/utils.js";
 import cities from "./static/gamedata/french-cities.json" with {type: 'json'}; //Default
 import games from "./static/games.json" with {type: 'json'};
-import Database from './static/scripts/database/database.js';
+import ScoreboardDatabase from './static/scripts/database/database.js';
 
 /**
  * ===========================================
@@ -20,7 +20,7 @@ const firebaseConfig = {
 };
 
 //Initialize Database
-const db = new Database({
+const db = new ScoreboardDatabase({
     debug: true,
     firebaseConfig: firebaseConfig
 });
@@ -35,7 +35,7 @@ async function refreshScoreboard() {
     const pinTableBody = document.querySelector('#pin tbody');
     pinTableBody.innerHTML = '';
     
-    const pinDocs = Database.sortDocs(Database.getDocPin(rawDocs));
+    const pinDocs = ScoreboardDatabase.sortDocs(ScoreboardDatabase.getDocPin(rawDocs));
 
     pinDocs.forEach(doc => {
         Util.populateTable(pinTableBody, doc);
@@ -45,7 +45,7 @@ async function refreshScoreboard() {
     const typeTableBody = document.querySelector('#type tbody');
     typeTableBody.innerHTML = '';
     
-    const typeDocs = Database.sortDocs(Database.getDocType(rawDocs));
+    const typeDocs = ScoreboardDatabase.sortDocs(ScoreboardDatabase.getDocType(rawDocs));
 
     typeDocs.forEach(doc => {
         Util.populateTable(typeTableBody, doc);
@@ -55,7 +55,7 @@ async function refreshScoreboard() {
     const typeHardTableBody = document.querySelector('#type-hard tbody');
     typeHardTableBody.innerHTML = '';
     
-    const typeHardDocs = Database.sortDocs(Database.getDocTypeHard(rawDocs));
+    const typeHardDocs = ScoreboardDatabase.sortDocs(ScoreboardDatabase.getDocTypeHard(rawDocs));
 
     typeHardDocs.forEach(doc => {
         Util.populateTable(typeHardTableBody, doc);
