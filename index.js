@@ -323,6 +323,7 @@ function clearPin(pin) {
 /**
  * Hint answer
  * @param {Element} pin
+ * @param {Number} failedAttempts
  */
 function hintAnswer(pin, failedAttempts) {
     pin.classList.add('show-hint')
