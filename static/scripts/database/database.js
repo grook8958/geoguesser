@@ -88,7 +88,7 @@ class ScoreboardDatabase {
             });
             return docs;
         } catch (e) {
-        if (this.options.debug) console.error("Error reading documents: ", e);
+            if (this.options.debug) console.error("Error reading documents: ", e);
         }
     }
 
