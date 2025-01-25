@@ -63,6 +63,9 @@ class HTMLSelectMenu {
          */
         this.onSelected = onSelected;
 
+        /**
+         * The child elements bound to the select menu
+         */
         this.childElements = {
             itemContainer: null,
             button: this.container.querySelector(options.selectMenuButtonSelector ?? '.select-menu-button'),
@@ -82,7 +85,6 @@ class HTMLSelectMenu {
          * @readonly
          */
         this.facingDownArrowData = options.facingUpArrowData ?? 'm19 9l-7 7l-7-7';
-
 
         //Validate the options
         this._validate(options.skipValidation ?? false);
