@@ -13,12 +13,14 @@
 class HTMLSelectMenu {
     /**
      * @typedef {Object} HTMLSelectMenuOptions
-     * @property {string} [facingUpArrowData=m5 15l7-7l7 7]
-     * @property {string} [facingDownArrowData=m19 9l-7 7l-7-7]
-     * @property {boolean} [skipValidation=false]
-     * @property {string} [selectMenuButtonSelector=.select-menu-button]
-     * @property {string} [selectMenuArrowPathSelector=.select-menu-arrow-path]
+     * @property {string} [facingUpArrowData=m5 15l7-7l7 7] Data code for the up arrow symbol.
+     * @property {string} [facingDownArrowData=m19 9l-7 7l-7-7] Data code for the down arrow symbol.
+     * @property {boolean} [skipValidation=false] Wether validation should be skipped
+     * @property {string} [selectMenuButtonSelector=.select-menu-button] Selector to the menu button
+     * @property {string} [selectMenuArrowPathSelector=.select-menu-arrow-path] Selector to the arrow path element
+     * @property {number} [defaultValueIndex=0] The index at which the default value is
      */
+
     /**
      * A custom HTML Select Menu.
      * @param {string} containerId The id of the div in which the select menu is (eg: select-menu-id) 
@@ -36,6 +38,12 @@ class HTMLSelectMenu {
          * The container 
          */
         this.container = document.getElementById(containerId);
+
+        /**
+         * The index at which the default value is
+         * @type {number}
+         */
+        this.defaultValueIndex = options.defaultValueIndex ?? 0;
         
         /**
          * @typedef {Object} HTMLSelectMenuData
@@ -173,7 +181,7 @@ class HTMLSelectMenu {
      * @returns 
      */
     _parseData(data = this.data) {
-        return { selected: data[0], stored: data};
+        return { selected: data[this.defaultValueIndex], stored: data};
     }
 
     /**
