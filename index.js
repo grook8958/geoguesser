@@ -1,6 +1,5 @@
 import HTMLSelectMenu from "./static/scripts/HTMLSelectMenu.js";
 import * as Util from "./static/scripts/utils.js";
-import cities from "./static/gamedata/french-cities.json" with {type: 'json'}; //Default
 import games from "./static/games.json" with {type: 'json'};
 import ScoreboardDatabase from './static/scripts/database/database.js';
 
@@ -87,7 +86,7 @@ const gameSelector = new HTMLSelectMenu('game-selector', Object.keys(games), onG
 /**
  * @type {Array<Pin>}
  */
-let pins = cities; //default on page load
+let pins = [null]; //default on page load
 
 /**
  * @type {Array<Pin>}
