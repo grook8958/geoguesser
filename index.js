@@ -381,7 +381,7 @@ async function pinOnClick(event) {
     if (gameStarted == -1) return;
 
     //Start timer + game
-    if (gameStarted == 0){timer = startTimer();}
+    if (gameStarted == 0) {timer = startTimer();}
     gameStarted = 1
 
     // Get the corrent pin
