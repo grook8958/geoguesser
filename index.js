@@ -116,7 +116,10 @@ function onGameSelect(item) {
 /**
  * PAGE INITIALISATION
  */
-init(modeSelector.data.selected, gameSelector.data.selected);
+window.addEventListener('load', () => {
+    init(modeSelector.data.selected, gameSelector.data.selected);
+})
+
 
 /**
  * Set the backround image
