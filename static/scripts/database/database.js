@@ -57,9 +57,10 @@ class ScoreboardDatabase {
     /**
      * 
      * @param {string} collectionName 
-     * @param {DatabaseScoreboardDocumentObject} document 
+     * @param {DatabaseScoreboardDocumentObject|ScoreboardDocument} document 
      */
     async addScoreboardData(collectionName, document) {
+        if (document instanceof ScoreboardDocument) {document = document.toJSON()};
         try {
             // Reference to the collection where you want to add data
             const docRef = await addDoc(collection(this.db, collectionName), document);
