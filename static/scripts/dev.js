@@ -1,10 +1,7 @@
 /**
  * Enter dev mode:
  * 
- * var script = document.createElement('script');
- * script.type = 'module';
- * script.src = './static/scripts/dev.js';
- * document.head.appendChild(script);
+ * var script = document.createElement('script');script.type = 'module';script.src = './static/scripts/dev.js';document.head.appendChild(script);
  */
 
 
