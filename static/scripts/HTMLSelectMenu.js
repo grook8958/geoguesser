@@ -19,6 +19,7 @@ class HTMLSelectMenu {
      * @property {string} [selectMenuButtonSelector=.select-menu-button] Selector to the menu button
      * @property {string} [selectMenuArrowPathSelector=.select-menu-arrow-path] Selector to the arrow path element
      * @property {number} [defaultValueIndex=0] The index at which the default value is
+     * @property {number} [defaultValue=null] The default value
      */
 
     /**
@@ -40,10 +41,16 @@ class HTMLSelectMenu {
         this.container = document.getElementById(containerId);
 
         /**
+         * The default value
+         * @type {any}
+         */
+        this.defaultValue = options.defaultValue ?? null;
+
+        /**
          * The index at which the default value is
          * @type {number}
          */
-        this.defaultValueIndex = options.defaultValueIndex ?? 0;
+        this.defaultValueIndex = options.defaultValueIndex ?? data.indexOf(this.defaultValue) != -1 ? data.indexOf(this.defaultValue) : 0;
         
         /**
          * @typedef {Object} HTMLSelectMenuData
@@ -183,6 +190,7 @@ class HTMLSelectMenu {
      * @returns 
      */
     _parseData(data = this.data) {
+        console.log(this)
         return { selected: data[this.defaultValueIndex], stored: data};
     }
 
