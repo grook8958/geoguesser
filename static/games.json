@@ -3,5 +3,10 @@
         "map_img_path": "./static/images/map-carte.png",
         "data_path": "./static/gamedata/french-cities.json",
         "instruction_name": "city"
+    },
+    "English Counties": {
+        "map_img_path": "./static/images/English_counties_1851_resized.png",
+        "data_path": "./static/gamedata/english-counties.json",
+        "instruction_name": "county"
     }
 }
