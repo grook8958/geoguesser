@@ -76,7 +76,8 @@ let failedAttempts = 0;
 //Initialize de mode selector
 const modeSelector = new HTMLSelectMenu('mode-selector', ['Pin', 'Type', 'Type (Hard)'], onModeSelect);
 const gameSelector = new HTMLSelectMenu('game-selector', Object.keys(games), onGameSelect, {
-    defaultValue: "English Counties"
+    defaultValue: "English Counties",
+    onInit: (selectMenu) => {document.getElementById('banner-subtitle').innerText = selectMenu.data.selected;}
 });
 
 /**
