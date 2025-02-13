@@ -20,6 +20,7 @@ class HTMLSelectMenu {
      * @property {string} [selectMenuArrowPathSelector=.select-menu-arrow-path] Selector to the arrow path element
      * @property {number} [defaultValueIndex=0] The index at which the default value is
      * @property {number} [defaultValue=null] The default value
+     * @property {(selectMenu: HTMLSelectMenu) => void} [onInit=null] A function to run when the selectmenu is initialised
      */
 
     /**
@@ -93,6 +94,12 @@ class HTMLSelectMenu {
          */
         this.facingDownArrowData = options.facingUpArrowData ?? 'm19 9l-7 7l-7-7';
 
+        /**
+         * A function to run when the selectmenu is initialised
+         * @type {(selectMenu: HTMLSelectMenu) => void}
+         */
+        this.onInit = options.onInit ?? (() => {});
+
         //Validate the options
         this._validate(options.skipValidation ?? false);
 
@@ -110,7 +117,9 @@ class HTMLSelectMenu {
             const state = this.getState();
             if (state === 0) this.closeSelectMenu();
             else if (state === 1) this.openSelectMenu();
-        })
+        });
+        this.setSelected(this.data.selected);
+        this.onInit(this);
     }
 
     /**
